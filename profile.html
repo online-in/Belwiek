@@ -13,11 +13,6 @@
         body { font-family: 'Inter', sans-serif; }
         .btn-hover { transition: all 0.3s ease-in-out; }
         .btn-hover:hover { transform: translateY(-2px); }
-        input[type="file"] { display: none; }
-        .custom-file-upload {
-            border: 1px solid #ccc; display: inline-block; padding: 6px 12px; cursor: pointer; background-color: #f9fafb; border-radius: 0.5rem; font-weight: 500;
-        }
-        .custom-file-upload:hover { background-color: #f3f4f6; }
         #loader-overlay {
             position: fixed; inset: 0; background-color: white; display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.7s ease-out;
         }
@@ -37,7 +32,6 @@
         .animate-slide-up {
             animation: slideUpFadeIn 0.8s ease-out forwards;
         }
-        /* Confirmation Modal */
         #confirmation-modal {
             transition: opacity 0.3s ease;
         }
@@ -45,12 +39,10 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Loader Overlay -->
     <div id="loader-overlay">
         <div class="loader-logo w-16 h-16 bg-blue-600 rounded-full"></div>
     </div>
 
-    <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
             <h3 class="text-lg font-bold">Confirm Deletion</h3>
@@ -62,7 +54,6 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div id="main-content">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <header class="py-6">
@@ -113,23 +104,13 @@
                                     <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
                                     <input type="email" id="email" disabled class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm">
                                 </div>
-                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Profile Picture</label>
-                                        <label for="profileImageFile" class="custom-file-upload mt-1">
-                                            <i class="fa fa-upload mr-2"></i>Choose File
-                                        </label>
-                                        <input type="file" id="profileImageFile" accept="image/*">
-                                        <span id="profile-file-name" class="text-sm text-gray-500 ml-2">No file chosen</span>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Cover Image</label>
-                                         <label for="coverImageFile" class="custom-file-upload mt-1">
-                                            <i class="fa fa-upload mr-2"></i>Choose File
-                                        </label>
-                                        <input type="file" id="coverImageFile" accept="image/*">
-                                        <span id="cover-file-name" class="text-sm text-gray-500 ml-2">No file chosen</span>
-                                    </div>
+                                <div>
+                                    <label for="profileImageUrl" class="block text-sm font-medium text-gray-700">Profile Picture URL</label>
+                                    <input type="text" id="profileImageUrl" placeholder="https://example.com/profile.jpg" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="coverImageUrl" class="block text-sm font-medium text-gray-700">Cover Image URL</label>
+                                    <input type="text" id="coverImageUrl" placeholder="https://example.com/cover.jpg" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
                                     <label for="description" class="block text-sm font-medium text-gray-700">Your Description</label>
@@ -163,7 +144,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+        // Storage is no longer needed here
+        // import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBvsw7JSMimmXX1oxj3hlu0H4CvBmGCEjI",
@@ -178,7 +160,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
+        // const storage = getStorage(app); // Not needed anymore
 
         // --- DOM Elements ---
         let currentUser = null;
@@ -186,8 +168,8 @@
         const profileForm = document.getElementById('profile-form');
         const messageBox = document.getElementById('message-box');
         const userBlogList = document.getElementById('user-blog-list');
-        const profileImageInput = document.getElementById('profileImageFile');
-        const coverImageInput = document.getElementById('coverImageFile');
+        const profileImageUrlInput = document.getElementById('profileImageUrl');
+        const coverImageUrlInput = document.getElementById('coverImageUrl');
         const confirmationModal = document.getElementById('confirmation-modal');
         const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
         const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
@@ -218,14 +200,19 @@
 
             if (docSnap.exists()) {
                 const userData = docSnap.data();
-                document.getElementById('profile-img-display').src = userData.profileImageUrl || `https://placehold.co/120x120/E0E7FF/3730A3?text=${userData.name.charAt(0)}`;
+                const profileInitial = userData.name ? userData.name.charAt(0).toUpperCase() : 'U';
+                document.getElementById('profile-img-display').src = userData.profileImageUrl || `https://placehold.co/120x120/E0E7FF/3730A3?text=${profileInitial}`;
                 document.getElementById('cover-img-display').src = userData.coverImageUrl || 'https://placehold.co/1200x300/E0E7FF/3730A3?text=Cover+Image';
                 document.getElementById('profile-name-display').textContent = userData.name;
                 document.getElementById('profile-email-display').textContent = userData.email;
                 document.getElementById('profile-desc-display').textContent = userData.description || "No description provided.";
+                
+                // Populate form fields
                 document.getElementById('fullName').value = userData.name;
                 document.getElementById('email').value = userData.email;
                 document.getElementById('description').value = userData.description || '';
+                profileImageUrlInput.value = userData.profileImageUrl || '';
+                coverImageUrlInput.value = userData.coverImageUrl || '';
             } else {
                 console.log("No such user document!");
             }
@@ -283,7 +270,7 @@
                 try {
                     await deleteDoc(doc(db, "blogs", blogIdToDelete));
                     showMessage('Post deleted successfully.');
-                    loadUserBlogs(currentUser.uid); // Refresh the list
+                    loadUserBlogs(currentUser.uid);
                 } catch (error) {
                     console.error("Error deleting post: ", error);
                     showMessage('Error deleting post: ' + error.message, true);
@@ -301,37 +288,17 @@
             }).catch((error) => console.error("Sign out error:", error));
         });
 
-        // --- Handle File Input Change for UI Feedback ---
-        profileImageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                document.getElementById('profile-file-name').textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('profile-img-display').src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+        // --- Handle Image URL Input for Live Preview ---
+        profileImageUrlInput.addEventListener('input', () => {
+            const url = profileImageUrlInput.value.trim();
+            const profileInitial = document.getElementById('fullName').value ? document.getElementById('fullName').value.charAt(0).toUpperCase() : 'U';
+            document.getElementById('profile-img-display').src = url || `https://placehold.co/120x120/E0E7FF/3730A3?text=${profileInitial}`;
         });
 
-        coverImageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                 document.getElementById('cover-file-name').textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('cover-img-display').src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+        coverImageUrlInput.addEventListener('input', () => {
+            const url = coverImageUrlInput.value.trim();
+            document.getElementById('cover-img-display').src = url || 'https://placehold.co/1200x300/E0E7FF/3730A3?text=Cover+Image';
         });
-
-        // --- Helper to Upload Image to Firebase Storage ---
-        async function uploadImage(file, path) {
-            const storageRef = ref(storage, path);
-            const snapshot = await uploadBytes(storageRef, file);
-            return await getDownloadURL(snapshot.ref);
-        }
 
         // --- Handle Profile Update ---
         profileForm.addEventListener('submit', async (e) => {
@@ -347,20 +314,12 @@
 
             const updates = {
                 name: document.getElementById('fullName').value,
-                description: document.getElementById('description').value
+                description: document.getElementById('description').value,
+                profileImageUrl: profileImageUrlInput.value.trim(),
+                coverImageUrl: coverImageUrlInput.value.trim(),
             };
 
             try {
-                const profileFile = profileImageInput.files[0];
-                const coverFile = coverImageInput.files[0];
-
-                if (profileFile) {
-                    updates.profileImageUrl = await uploadImage(profileFile, `profile_images/${currentUser.uid}/${profileFile.name}`);
-                }
-                if (coverFile) {
-                    updates.coverImageUrl = await uploadImage(coverFile, `cover_images/${currentUser.uid}/${coverFile.name}`);
-                }
-
                 const userDocRef = doc(db, "users", currentUser.uid);
                 await updateDoc(userDocRef, updates);
 
@@ -371,7 +330,7 @@
                 await updateProfile(auth.currentUser, authProfileUpdates);
                 
                 showMessage('Profile updated successfully!');
-                loadUserProfile(currentUser.uid); 
+                loadUserProfile(currentUser.uid); // Refresh data from Firestore
 
             } catch (error) {
                 console.error("Error updating profile: ", error);
