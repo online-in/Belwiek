@@ -105,12 +105,18 @@
                                     <input type="email" id="email" disabled class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm">
                                 </div>
                                 <div>
-                                    <label for="profileImageUrl" class="block text-sm font-medium text-gray-700">Profile Picture URL</label>
-                                    <input type="text" id="profileImageUrl" placeholder="https://example.com/profile.jpg" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <div class="flex justify-between items-center">
+                                        <label for="profileImageUrl" class="block text-sm font-medium text-gray-700">Profile Picture URL</label>
+                                        <a href="https://imgbb.com/" target="_blank" class="text-xs text-blue-600 hover:underline">Upload & Get URL</a>
+                                    </div>
+                                    <input type="text" id="profileImageUrl" placeholder="Paste your profile image URL here" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
-                                    <label for="coverImageUrl" class="block text-sm font-medium text-gray-700">Cover Image URL</label>
-                                    <input type="text" id="coverImageUrl" placeholder="https://example.com/cover.jpg" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <div class="flex justify-between items-center">
+                                        <label for="coverImageUrl" class="block text-sm font-medium text-gray-700">Cover Image URL</label>
+                                        <a href="https://imgbb.com/" target="_blank" class="text-xs text-blue-600 hover:underline">Upload & Get URL</a>
+                                    </div>
+                                    <input type="text" id="coverImageUrl" placeholder="Paste your cover image URL here" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
                                     <label for="description" class="block text-sm font-medium text-gray-700">Your Description</label>
@@ -144,9 +150,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        // Storage is no longer needed here
-        // import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
+        
         const firebaseConfig = {
             apiKey: "AIzaSyBvsw7JSMimmXX1oxj3hlu0H4CvBmGCEjI",
             authDomain: "belwiek-57406.firebaseapp.com",
@@ -160,7 +164,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        // const storage = getStorage(app); // Not needed anymore
 
         // --- DOM Elements ---
         let currentUser = null;
