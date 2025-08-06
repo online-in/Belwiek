@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belwiek - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-hover {
+            transition: all 0.3s ease-in-out;
+        }
+        .blog-card {
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        #blog-modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #blog-modal.hidden {
+            pointer-events: none;
+        }
+        #blog-modal .modal-content {
+             transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="blog-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0" onclick="closeBlogModal()">
+        <div class="modal-content bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform scale-95" onclick="event.stopPropagation()">
+            <div class="p-4 sm:p-6 md:p-8">
+                <div class="flex justify-between items-start">
+                    <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h2>
+                    <button onclick="closeBlogModal()" class="text-gray-400 text-2xl leading-none">&times;</button>
+                </div>
+                <img id="modal-image" src="" alt="Blog Image" class="w-full h-64 md:h-80 object-cover rounded-lg my-4" onerror="this.onerror=null;this.src='https://placehold.co/800x500/ccc/FFFFFF?text=Image+Not+Found';">
+                <span id="modal-category" class="text-sm font-medium text-blue-500 bg-blue-100 py-1 px-3 rounded-full"></span>
+                <div id="modal-content-html" class="text-gray-700 mt-4 prose lg:prose-lg max-w-none"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+
+        <header class="py-6">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full"></div>
+                    <span class="text-2xl font-bold text-gray-900">Belwiek</span>
+                </a>
+
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-blue-600 font-semibold">Home</a>
+                    <a href="aboutme.html" class="text-gray-600">About</a>
+                    <a href="blog.html" class="text-gray-600">Blog</a>
+                </nav>
+
+                <div id="auth-links" class="flex items-center space-x-4">
+                     <a href="auth.html" class="text-gray-600 hidden sm:block">Sign in</a>
+                    <a href="auth.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md btn-hover">Register</a>
+                </div>
+                <div id="user-links" class="hidden items-center space-x-4">
+                    <a href="profile.html" class="text-gray-600 hidden sm:block">Profile</a>
+                    <a href="creat.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md btn-hover">Create Post</a>
+                    <button id="sign-out-btn" class="text-gray-600">Sign Out</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="py-16">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h1 class="text-5xl font-bold text-gray-900 mt-4 leading-tight">We're Belwiek. See our thoughts, stories, & ideas.</h1>
+                    <p class="text-gray-600 mt-6">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                    <div class="mt-8 space-x-4">
+                        <a href="blog.html" class="bg-blue-600 text-white px-7 py-3 rounded-lg shadow-md btn-hover">Read More</a>
+                        <a href="blog.html" class="border border-gray-300 text-gray-700 px-7 py-3 rounded-lg btn-hover">All Articles</a>
+                    </div>
+                </div>
+                <div id="hero-slider-wrapper" class="bg-white p-6 rounded-lg shadow-xl relative overflow-hidden min-h-[150px]">
+                    <div id="slider-container" class="flex transition-transform duration-500 ease-in-out">
+                         <p id="slider-loading" class="w-full text-center p-4">Loading latest posts...</p>
+                    </div>
+                    <button id="prevBtn" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10 hidden"><i class="fas fa-chevron-left"></i></button>
+                    <button id="nextBtn" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10 hidden"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Article categories</h2>
+                <a href="blog.html" class="text-blue-600 font-semibold">Browse all articles <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            <div id="categories-grid" class="grid md:grid-cols-3 gap-8">
+                </div>
+        </section>
+
+        <section class="py-16">
+             <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Latest Posts</h2>
+                <a href="blog.html" class="text-blue-600 font-semibold">View all <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            <div id="latest-posts-grid" class="grid lg:grid-cols-3 gap-8">
+                </div>
+        </section>
+
+    </div>
+
+    <section class="py-16 bg-blue-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold">Get the best sent to your<br>inbox, every month</h2>
+            <div class="mt-8 max-w-md mx-auto flex items-center bg-white p-2 rounded-lg shadow-md">
+                <input type="email" placeholder="Enter your email" class="w-full p-2 bg-transparent focus:outline-none text-gray-700">
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg ml-2 btn-hover">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="py-16">
+             <h2 class="text-3xl font-bold mb-8">Featured</h2>
+             <div id="featured-grid" class="grid md:grid-cols-2 gap-8">
+                 </div>
+        </section>
+
+        <section class="py-16">
+            <h2 class="text-3xl font-bold mb-8">ARTICLES & NEWS</h2>
+            <div id="articles-news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </section>
+
+        <section class="py-16 bg-blue-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+            <div class="container mx-auto">
+                <h2 class="text-3xl font-bold mb-8">Recommended</h2>
+                <div id="recommended-grid" class="grid md:grid-cols-3 gap-8">
+                    </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-white pt-16 pb-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full"></div>
+                        <span class="text-2xl font-bold text-gray-900">Belwiek</span>
+                    </a>
+                    <p class="text-gray-600 mt-4">A platform for thinkers, writers, and creators.</p>
+                </div>
+                <div id="footer-categories">
+                    <h4 class="font-semibold text-lg">Categories</h4>
+                    <ul class="mt-4 space-y-2">
+                        </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg">Company</h4>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="aboutme.html" class="text-gray-600">About Us</a></li>
+                        <li><a href="blog.html" class="text-gray-600">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg">Subscribe to our Newsletter</h4>
+                    <p class="text-gray-600 mt-4">Get the latest posts delivered right to your inbox.</p>
+                    <div class="mt-4 flex">
+                        <input type="email" placeholder="Your email" class="w-full p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <button class="bg-blue-600 text-white px-4 rounded-r-lg">Sub</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-16 border-t pt-8 text-center text-gray-500">
+                <p>&copy; 2024 Belwiek. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCGE1hTk8qWu1bojSOUmj7n6l2XpecgIA",
+            authDomain: "belwiek-de3ee.firebaseapp.com",
+            projectId: "belwiek-de3ee",
+            storageBucket: "belwiek-de3ee.firebasestorage.app",
+            messagingSenderId: "720792558267",
+            appId: "1:720792558267:web:a38a9cf1fc7fcbbe0ea79e",
+            measurementId: "G-EE2P25Y1YF"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- DOM Elements ---
+        const authLinks = document.getElementById('auth-links');
+        const userLinks = document.getElementById('user-links');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        let allFirebaseBlogs = []; // To store blogs for the modal
+
+        // --- Auth State Observer ---
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                // User is signed in
+                authLinks.classList.add('hidden');
+                userLinks.classList.remove('hidden');
+                userLinks.classList.add('flex');
+            } else {
+                // User is signed out
+                authLinks.classList.remove('hidden');
+                authLinks.classList.add('flex');
+                userLinks.classList.add('hidden');
+            }
+        });
+
+        // --- Sign Out ---
+        if(signOutBtn) {
+            signOutBtn.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    // Page will automatically update via onAuthStateChanged
+                    console.log("User signed out");
+                }).catch((error) => {
+                    console.error("Sign out error:", error);
+                });
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Manually Generated Blog Data ---
+            const allBlogs = [
+                {
+                    id: '1',
+                    title: 'The Fragile Balance Of Nature',
+                    category: 'Nature',
+                    authorName: 'Alex Doe',
+                    createdAt: 'Sep 20, 2023',
+                    imageUrl: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=2070&auto=format&fit=crop',
+                    content: '<p>Exploring the delicate ecosystems of our planet is more important than ever. This article delves into the intricate relationships between flora and fauna and the impact of human activity.</p><p>We will journey through lush rainforests, arid deserts, and deep oceans to understand the threads that connect all living things. Join us in appreciating the beauty and complexity of the natural world.</p>'
+                },
+                {
+                    id: '2',
+                    title: 'A Journey Through Time: Ancient Civilizations',
+                    category: 'History',
+                    authorName: 'Jane Smith',
+                    createdAt: 'Aug 15, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/36006/renaissance-schallaburg-figures-facade.jpg',
+                    content: '<p>Travel back in time with us as we explore the wonders of ancient civilizations. From the pyramids of Egypt to the temples of Greece, we uncover the secrets of the past.</p><p>Learn about their cultures, technologies, and the legacies they left behind that still influence our world today.</p>'
+                },
+                {
+                    id: '3',
+                    title: 'The Urban Jungle: A Guide to City Life',
+                    category: 'Lifestyle',
+                    authorName: 'Mike Johnson',
+                    createdAt: 'Jul 22, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/1172253/pexels-photo-1172253.jpeg',
+                    content: '<p>Navigating the bustling streets of a modern metropolis can be both exciting and challenging. This guide provides tips and tricks for thriving in the urban jungle.</p><p>Discover hidden gems, culinary delights, and cultural hotspots that make city living an adventure.</p>'
+                },
+                {
+                    id: '4',
+                    title: 'Secrets of the Deep: Marine Biology',
+                    category: 'Science',
+                    authorName: 'Dr. Emily Carter',
+                    createdAt: 'Jun 01, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/256262/pexels-photo-256262.jpeg',
+                    content: '<p>The ocean depths hold countless mysteries. Dive with us into the world of marine biology to discover bizarre creatures and vibrant ecosystems hidden beneath the waves.</p><p>This is a look into the cutting-edge research and conservation efforts protecting our oceans.</p>'
+                },
+                {
+                    id: '5',
+                    title: 'The Digital Age: Navigating the New Landscape',
+                    category: 'Technology',
+                    authorName: 'Chris Lee',
+                    createdAt: 'May 10, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/417458/pexels-photo-417458.jpeg',
+                    content: '<p>In an era dominated by technology, understanding the digital landscape is crucial. This article explores the latest trends in AI, blockchain, and cybersecurity.</p><p>Learn how these technologies are shaping our future and what it means for society, business, and our personal lives.</p>'
+                },
+                {
+                    id: '6',
+                    title: 'The 5G Revolution: More Than Just Speed',
+                    category: 'Technology',
+                    authorName: 'Priya Sharma',
+                    createdAt: 'Apr 25, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/6200343/pexels-photo-6200343.jpeg',
+                    content: '<p>5G technology promises to revolutionize connectivity. But its impact goes far beyond faster download speeds. Explore the potential of 5G to power smart cities, autonomous vehicles, and the Internet of Things.</p>'
+                },
+                {
+                    id: '7',
+                    title: 'The Finance-Flow: Decoding Investment',
+                    category: 'Business',
+                    authorName: 'Tom Chen',
+                    createdAt: 'Apr 12, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg',
+                    content: '<p>A blog about a startup that wants to revolutionize the financial industry through decentralized finance and accessible investment tools for everyone.</p>'
+                },
+                {
+                    id: '8',
+                    title: 'World of Words: Effective Communication',
+                    category: 'Lifestyle',
+                    authorName: 'Sarah Jenkins',
+                    createdAt: 'Mar 30, 2023',
+                    imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1973&auto=format&fit=crop',
+                    content: '<p>Mastering the art of communication is a key to success in personal and professional life. This post offers practical advice on public speaking, active listening, and persuasive writing.</p>'
+                },
+                {
+                    id: '9',
+                    title: 'Pinnacle Footprints: Paths to Success',
+                    category: 'Business',
+                    authorName: 'David Kim',
+                    createdAt: 'Mar 15, 2023',
+                    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop',
+                    content: '<p>What does it take to reach the pinnacle of your field? We trace the journeys of successful entrepreneurs and leaders to uncover the habits and mindsets that drove them to the top.</p>'
+                },
+                {
+                    id: '10',
+                    title: 'The benefits of a remote-first culture',
+                    category: 'Business',
+                    authorName: 'Olivia Martinez',
+                    createdAt: 'Mar 02, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/33309130/pexels-photo-33309130.jpeg',
+                    content: '<p>The shift to remote work is more than a trend; it\'s a new paradigm. Discover the benefits of a remote-first culture, from increased productivity to a better work-life balance.</p>'
+                },
+                {
+                    id: '11',
+                    title: 'Digital nomads: a new way of living',
+                    category: 'Travel',
+                    authorName: 'Leo Gagnon',
+                    createdAt: 'Feb 19, 2023',
+                    imageUrl: 'https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=2073&auto=format&fit=crop',
+                    content: '<p>Combine work and travel as a digital nomad. This guide covers everything you need to know, from finding accommodation to managing your work on the go.</p>'
+                },
+                {
+                    id: '12',
+                    title: 'Creative block? Here are some tips',
+                    category: 'Creativity',
+                    authorName: 'Chloe Dubois',
+                    createdAt: 'Jan 30, 2023',
+                    imageUrl: 'https://images.pexels.com/photos/1193743/pexels-photo-1193743.jpeg',
+                    content: '<p>Every creative hits a wall sometimes. Here are proven strategies to overcome creative blocks and get your inspiration flowing again.</p>'
+                }
+            ];
+            
+
+            // --- Helper Functions to Populate Sections ---
+
+            function populateHeroSlider(blogs) {
+                const container = document.getElementById('slider-container');
+                const loading = document.getElementById('slider-loading');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+
+                if (!blogs || blogs.length === 0) {
+                     loading.textContent = 'No recent posts available.';
+                     return;
+                }
+                
+                loading.style.display = 'none';
+                container.innerHTML = ''; // Clear
+                
+                blogs.forEach(blog => {
+                    const slide = `
+                        <div class="flex-shrink-0 w-full p-4 blog-card" data-id="${blog.id}">
+                            <div class="flex items-center space-x-4">
+                                <img src="${blog.imageUrl}" class="w-24 h-24 rounded-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/100x100/E2E8F0/334155?text=Img';">
+                                <div>
+                                    <h4 class="font-semibold">${blog.title}</h4>
+                                    <div class="flex items-center mt-2">
+                                        <span class="ml-2 text-sm text-gray-600">${blog.authorName || 'Unknown Author'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += slide;
+                });
+                
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                initSlider(blogs.length);
+            }
+
+            function populateCategories(blogs) {
+                const container = document.getElementById('categories-grid');
+                const uniqueCategories = [...new Set(blogs.map(b => b.category))].slice(0, 3); // Get first 3 unique
+                container.innerHTML = ''; // Clear
+                uniqueCategories.forEach(category => {
+                    const blogForImage = blogs.find(b => b.category === category);
+                    const imageUrl = blogForImage ? blogForImage.imageUrl : `https://placehold.co/600x400/718096/FFFFFF?text=${category}`;
+                    const card = `
+                        <a href="blog.html" class="relative rounded-lg overflow-hidden h-80 bg-cover bg-center blog-card" style="background-image: url('${imageUrl}')">
+                            <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end p-6">
+                                <h3 class="text-white text-2xl font-bold">${category}</h3>
+                                <p class="text-gray-300 mt-2">Explore our articles on ${category.toLowerCase()}.</p>
+                            </div>
+                        </a>
+                    `;
+                    container.innerHTML += card;
+                });
+            }
+
+            function populateLatestPosts(blogs) {
+                const container = document.getElementById('latest-posts-grid');
+                if (!blogs || blogs.length === 0) {
+                    container.innerHTML = '<p class="col-span-full">No posts found.</p>';
+                    return;
+                }
+                container.innerHTML = ''; // Clear
+                
+                const mainPost = blogs[0];
+                const sidePosts = blogs.slice(1, 4);
+                
+                const mainPostHtml = `
+                    <div class="lg:col-span-2 blog-card" data-id="${mainPost.id}">
+                        <img src="${mainPost.imageUrl}" class="rounded-lg w-full h-96 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x500/BFDBFE/1E40AF?text=Image';">
+                        <span class="text-sm text-gray-500 mt-4 block">By <span class="font-semibold text-gray-800">${mainPost.authorName}</span> - ${mainPost.createdAt}</span>
+                        <h3 class="text-3xl font-bold mt-2">${mainPost.title}</h3>
+                    </div>
+                `;
+
+                let sidePostsHtml = '<div class="space-y-6">';
+                sidePosts.forEach(blog => {
+                    sidePostsHtml += `
+                        <div class="flex items-center space-x-4 blog-card" data-id="${blog.id}">
+                            <img src="${blog.imageUrl}" class="w-24 h-24 rounded-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/100x100/BFDBFE/1E40AF?text=Img';">
+                            <div>
+                                <h4 class="font-semibold">${blog.title}</h4>
+                                <span class="text-sm text-gray-500">${blog.createdAt}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                sidePostsHtml += '</div>';
+
+                container.innerHTML = mainPostHtml + sidePostsHtml;
+            }
+
+            function populateFeaturedPosts(blogs) {
+                const container = document.getElementById('featured-grid');
+                container.innerHTML = '';
+                blogs.forEach(blog => {
+                    const card = `
+                        <div class="blog-card" data-id="${blog.id}">
+                            <img src="${blog.imageUrl}" class="rounded-lg w-full h-64 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/C4B5FD/4C1D95?text=Img';">
+                            <h3 class="text-2xl font-bold mt-4">${blog.title}</h3>
+                            <p class="text-gray-600 mt-2">${blog.content.replace(/<[^>]+>/g, '').substring(0, 100)}...</p>
+                            <span class="text-blue-600 font-semibold mt-2 inline-block">Read More</span>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            }
+
+            function populateArticlesNews(blogs) {
+                const container = document.getElementById('articles-news-grid');
+                container.innerHTML = '';
+                blogs.forEach(blog => {
+                    const card = `
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden blog-card" data-id="${blog.id}">
+                            <img src="${blog.imageUrl}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x300/9CA3AF/111827?text=Img';">
+                            <div class="p-6">
+                                <h3 class="font-bold text-lg">${blog.title}</h3>
+                                <p class="text-gray-600 text-sm mt-2">${blog.content.replace(/<[^>]+>/g, '').substring(0, 80)}...</p>
+                                <span class="text-blue-600 font-semibold mt-4 inline-block">Read More</span>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            }
+            
+            function populateRecommended(blogs) {
+                const container = document.getElementById('recommended-grid');
+                container.innerHTML = '';
+                blogs.forEach(blog => {
+                    const card = `
+                        <div class="flex items-center space-x-4 blog-card" data-id="${blog.id}">
+                            <img src="${blog.imageUrl}" class="w-24 h-24 rounded-lg object-cover" onerror="this.onerror=null;this.src='https://placehold.co/100x100/34D399/064E3B?text=Img';">
+                            <div>
+                                <h4 class="font-semibold">${blog.title}</h4>
+                                <span class="text-sm text-gray-500">${blog.createdAt}</span>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            }
+
+            function populateFooterCategories(blogs) {
+                const container = document.querySelector('#footer-categories ul');
+                const uniqueCategories = [...new Set(blogs.map(b => b.category))].slice(0, 4);
+                container.innerHTML = '';
+                uniqueCategories.forEach(category => {
+                    container.innerHTML += `<li><a href="blog.html" class="text-gray-600">${category}</a></li>`;
+                });
+            }
+
+            // --- Modal ---
+            function openBlogModal(blogId) {
+                // Combine both manual and firebase blogs to find the correct one
+                const allAvailableBlogs = [...allBlogs, ...allFirebaseBlogs];
+                const blog = allAvailableBlogs.find(b => b.id === blogId);
+                if (!blog) return;
+
+                document.getElementById('modal-title').textContent = blog.title;
+                document.getElementById('modal-image').src = blog.imageUrl;
+                document.getElementById('modal-category').textContent = blog.category;
+                document.getElementById('modal-content-html').innerHTML = blog.content;
+
+                const modal = document.getElementById('blog-modal');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                     modal.classList.remove('opacity-0');
+                     modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            }
+
+            window.closeBlogModal = () => {
+                 const modal = document.getElementById('blog-modal');
+                 modal.classList.add('opacity-0');
+                 modal.querySelector('.modal-content').classList.add('scale-95');
+                 setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+
+            // --- Event Delegation for Clicks ---
+            document.body.addEventListener('click', function(event) {
+                const card = event.target.closest('.blog-card');
+                if (card && card.dataset.id) {
+                    openBlogModal(card.dataset.id);
+                }
+            });
+
+            // --- Hero Slider Logic ---
+            let sliderInterval;
+            function initSlider(totalSlides) {
+                if(totalSlides === 0) return;
+                const sliderContainer = document.getElementById('slider-container');
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                let currentIndex = 0;
+
+                function updateSlider() {
+                    sliderContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }
+
+                function next() {
+                    currentIndex = (currentIndex + 1) % totalSlides;
+                    updateSlider();
+                }
+
+                nextBtn.addEventListener('click', () => {
+                    next();
+                    resetInterval();
+                });
+
+                prevBtn.addEventListener('click', () => {
+                    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                    updateSlider();
+                    resetInterval();
+                });
+                
+                function resetInterval() {
+                    clearInterval(sliderInterval);
+                    sliderInterval = setInterval(next, 5000); // Auto-slide every 5 seconds
+                }
+
+                resetInterval();
+            }
+
+            // --- Fetch Slider Blogs from Firebase ---
+            async function fetchSliderBlogs() {
+                const blogsRef = collection(db, "blogs");
+                const q = query(blogsRef, orderBy("createdAt", "desc"), limit(4));
+                try {
+                    const querySnapshot = await getDocs(q);
+                    const firebaseBlogs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    allFirebaseBlogs = firebaseBlogs; // Store for modal
+                    populateHeroSlider(firebaseBlogs);
+                } catch (error) {
+                    console.error("Error fetching slider blogs: ", error);
+                    document.getElementById('slider-loading').textContent = 'Failed to load posts.';
+                }
+            }
+
+
+            // --- Initialize Page Content ---
+            function initializeManualContent() {
+                populateCategories(allBlogs);
+                populateLatestPosts(allBlogs);
+                populateFeaturedPosts(allBlogs.slice(4, 6));
+                populateArticlesNews(allBlogs.slice(6, 9));
+                populateRecommended(allBlogs.slice(9, 12));
+                populateFooterCategories(allBlogs);
+            }
+
+            // --- Run on page load ---
+            fetchSliderBlogs(); // Fetch for slider
+            initializeManualContent(); // Load the rest from manual data
+        });
+    </script>
+    
+</body>
+</html>
