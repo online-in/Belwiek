@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Belwiek</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
+    <style>
+        /* * ===================================================================
+         * Base Styles & Theming
+         * ===================================================================
+         */
+        :root {
+            --primary: #2563eb;      /* Blue 600 */
+            --primary-dark: #1d4ed8; /* Blue 700 */
+            --secondary: #0f172a;    /* Slate 900 */
+            --accent: #4f46e5;       /* Indigo 600 */
+            --light: #f1f5f9;        /* Slate 100 */
+            --dark: #1e293b;         /* Slate 800 */
+            --text: #334155;         /* Slate 700 */
+            --background: #ffffff;
+            --card-bg: #f8fafc;      /* Slate 50 */
+            --success: #22c55e;      /* Green 500 */
+            --error: #ef4444;        /* Red 500 */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --border-color: #cbd5e1; /* Slate 300 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            overflow: hidden; /* Prevents scrollbars from appearing */
+        }
+        
+        /* * ===================================================================
+         * Loading Overlay
+         * ===================================================================
+         */
+        #loader-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            transition: opacity 0.7s ease-out, visibility 0.7s ease-out;
+            opacity: 1;
+            visibility: visible;
+        }
+        #loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loader-logo {
+            width: 64px;
+            height: 64px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            50% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+
+        /* * ===================================================================
+         * Main Content Wrapper (for fade-in effect)
+         * ===================================================================
+         */
+         #main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            opacity: 0;
+            /* ENHANCEMENT: Added slide-up and scale animation */
+            transform: scale(0.98) translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+         }
+         #main-content.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+         }
+
+
+        /* * ===================================================================
+         * Animated Background Shapes
+         * ===================================================================
+         */
+        .shapes div {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            opacity: 0.2;
+            animation: float 20s linear infinite;
+            bottom: -150px;
+        }
+        .shapes div:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 18s; }
+        .shapes div:nth-child(2) { width: 80px; height: 80px; left: 85%; animation-duration: 22s; }
+        .shapes div:nth-child(3) { width: 40px; height: 40px; left: 5%; animation-duration: 25s; }
+        .shapes div:nth-child(4) { width: 100px; height: 100px; left: 50%; animation-duration: 15s; }
+        .shapes div:nth-child(5) { width: 50px; height: 50px; left: 80%; animation-duration: 20s; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-120vh) rotate(720deg); }
+        }
+
+        /* * ===================================================================
+         * Main Authentication Container
+         * ===================================================================
+         */
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            min-height: 600px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--shadow);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, var(--primary));
+            transform: skewX(-25deg);
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        /* * ===================================================================
+         * Form Styles & New Features
+         * ===================================================================
+         */
+        .form-container {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            padding: 40px;
+            transition: all 0.6s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--secondary);
+            font-size: 2rem;
+        }
+
+        .social-icons { margin: 15px 0; }
+        .social-icons a {
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            text-decoration: none;
+            align-items: center;
+            margin: 0 5px;
+            height: 40px;
+            width: 40px;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .social-icons a:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        span.form-text { font-size: 12px; margin-bottom: 10px; }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background-color: var(--light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        /* ENHANCEMENT: Icon pop animation on input focus */
+        input:focus ~ i { 
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        .form-options .remember-me { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .form-options input[type="checkbox"] { width: auto; }
+        a.forgot-password { color: var(--text); text-decoration: none; transition: color 0.3s ease; }
+        a.forgot-password:hover { color: var(--primary); }
+
+        .password-strength { width: 100%; margin-top: -10px; margin-bottom: 10px; }
+        .strength-bar { height: 5px; width: 0%; background-color: var(--error); border-radius: 5px; transition: all 0.3s ease; }
+        .strength-text { font-size: 12px; text-align: right; margin-top: 2px; height: 15px; }
+        .strength-bar.weak { background-color: #ef4444; width: 25%; }
+        .strength-bar.medium { background-color: #f97316; width: 50%; }
+        .strength-bar.strong { background-color: #84cc16; width: 75%; }
+        .strength-bar.very-strong { background-color: #22c55e; width: 100%; }
+
+        button {
+            border-radius: 8px;
+            border: 1px solid var(--primary-dark);
+            background-color: var(--primary);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            min-height: 45px;
+            overflow: hidden; 
+        }
+        button:hover { 
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+        }
+        button:active { 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+        button.hidden { background-color: transparent; border-color: #fff; }
+        
+        .spinner {
+            display: none;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            animation: spin 1s linear infinite;
+        }
+        button.loading .spinner { display: block; }
+        button.loading .button-text { visibility: hidden; }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .status-message {
+            padding: 10px; margin-top: 15px; border-radius: 8px; font-size: 14px; width: 100%; 
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .status-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .status-message.success { background-color: #d1fae5; color: #065f46; }
+        .status-message.error { background-color: #fee2e2; color: #991b1b; }
+        .status-message.info { background-color: #dbeafe; color: #1e40af; }
+
+        /* * ===================================================================
+         * Panel & Animation Styles
+         * ===================================================================
+         */
+        .sign-in { left: 0; z-index: 2; }
+        .sign-up { left: 0; z-index: 1; opacity: 0; }
+        .container.active .sign-in { transform: translateX(100%); opacity: 0; }
+        .container.active .sign-up { transform: translateX(100%); opacity: 1; z-index: 5; animation: show 0.6s; }
+        @keyframes show {
+            0%, 49.99% { opacity: 0; z-index: 1; }
+            50%, 100% { opacity: 1; z-index: 5; }
+        }
+        .toggle-container {
+            position: absolute; top: 0; left: 50%; width: 50%; height: 100%; overflow: hidden;
+            transition: all 0.6s ease-in-out; border-radius: 0 20px 20px 0; z-index: 100;
+        }
+        .container.active .toggle-container { transform: translateX(-100%); border-radius: 20px 0 0 20px; }
+        .toggle {
+            background: var(--primary); background: linear-gradient(to right, var(--accent), var(--primary));
+            height: 100%; color: #fff; position: relative; left: -100%; width: 200%;
+            transform: translateX(0); transition: all 0.6s ease-in-out;
+        }
+        .container.active .toggle { transform: translateX(50%); }
+        .toggle-panel {
+            position: absolute; width: 50%; height: 100%; display: flex; align-items: center;
+            justify-content: center; flex-direction: column; padding: 0 40px; text-align: center;
+            top: 0; transform: translateX(0); transition: all 0.6s ease-in-out;
+        }
+        
+        /* ENHANCEMENT: Staggered animation for toggle panel content */
+        .toggle-panel h1, .toggle-panel p, .toggle-panel button, .toggle-panel a {
+            transform: translateX(0);
+            opacity: 1;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        .toggle-left h1, .toggle-left p, .toggle-left button { transition-delay: 0.1s; }
+        .toggle-right h1, .toggle-right p, .toggle-right button { transition-delay: 0.1s; }
+        
+        .container.active .toggle-left h1,
+        .container.active .toggle-left p,
+        .container.active .toggle-left button {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .container:not(.active) .toggle-left h1,
+        .container:not(.active) .toggle-left p,
+        .container:not(.active) .toggle-left button {
+            transform: translateX(40px);
+            opacity: 0;
+        }
+
+        .container.active .toggle-right h1,
+        .container.active .toggle-right p,
+        .container.active .toggle-right button {
+            transform: translateX(-40px);
+            opacity: 0;
+        }
+
+        .toggle-panel h1 { color: white; }
+        .toggle-panel p { font-size: 14px; line-height: 1.5; margin: 20px 0; }
+        .toggle-left { transform: translateX(-200%); }
+        .container.active .toggle-left { transform: translateX(0); }
+        .toggle-right { right: 0; transform: translateX(0); }
+        .container.active .toggle-right { transform: translateX(200%); }
+        
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .container { max-width: 420px; min-height: 680px; border-radius: 20px; }
+            .toggle-container { display: none; }
+            .form-container { width: 100%; }
+            .container.active .sign-up { transform: translateX(0); }
+            .sign-up, .sign-in { border-radius: 20px; }
+            .mobile-toggle-text { display: block !important; margin-top: 20px; font-size: 14px; }
+            .mobile-toggle-text a { color: var(--primary); font-weight: 600; cursor: pointer; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loader-overlay">
+        <div class="loader-logo"></div>
+    </div>
+
+    <div id="main-content">
+        <div class="shapes"> <div></div> <div></div> <div></div> <div></div> <div></div> </div>
+
+        <div class="container" id="container">
+            <!-- Registration Form -->
+            <div class="form-container sign-up">
+                <form id="register-form">
+                    <h1>Create Account</h1>
+                    <div class="social-icons">
+                        <a href="#" class="icon" id="googleRegister"><i class="fa-brands fa-google"></i></a>
+                        <a href="#" class="icon" id="githubRegister"><i class="fa-brands fa-github"></i></a>
+                    </div>
+                    <span class="form-text">or use your email for registration</span>
+                    <div class="input-group">
+                        <input type="text" id="register-name" placeholder="Name" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="register-email" placeholder="Email" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="register-password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="password-strength">
+                        <div id="strength-bar" class="strength-bar"></div>
+                        <p id="strength-text" class="strength-text"></p>
+                    </div>
+                    <button type="submit" id="register-button">
+                        <span class="button-text">Sign Up</span>
+                        <i class="fas fa-spinner fa-spin spinner"></i>
+                    </button>
+                    <div id="registerStatus" class="status-message"></div>
+                    <p class="mobile-toggle-text" style="display: none;">Already have an account? <a id="mobile-login-link">Sign In</a></p>
+                </form>
+            </div>
+
+            <!-- Login Form -->
+            <div class="form-container sign-in">
+                <form id="login-form">
+                    <h1>Sign In</h1>
+                    <div class="social-icons">
+                        <a href="#" class="icon" id="googleLogin"><i class="fa-brands fa-google"></i></a>
+                        <a href="#" class="icon" id="githubLogin"><i class="fa-brands fa-github"></i></a>
+                    </div>
+                    <span class="form-text">or use your email password</span>
+                    <div class="input-group">
+                        <input type="email" id="login-email" placeholder="Email" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password" id="forgot-password-link">Forgot Password?</a>
+                    </div>
+                    <button type="submit" id="login-button">
+                        <span class="button-text">Sign In</span>
+                        <i class="fas fa-spinner fa-spin spinner"></i>
+                    </button>
+                    <div id="loginStatus" class="status-message"></div>
+                    <p class="mobile-toggle-text" style="display: none;">Don't have an account? <a id="mobile-register-link">Sign Up</a></p>
+                </form>
+            </div>
+
+            <!-- Sliding Overlay Panels -->
+            <div class="toggle-container">
+                <div class="toggle">
+                    <div class="toggle-panel toggle-left">
+                        <h1>Welcome Back!</h1>
+                        <p>Enter your personal details to use all of site features</p>
+                        <button class="hidden" id="login">Sign In</button>
+                    </div>
+                    <div class="toggle-panel toggle-right">
+                        <a href="index.html" class="flex items-center space-x-2 mb-4" style="display: inline-flex; text-decoration: none;">
+                            <div style="width: 36px; height: 36px; background-color: white; border-radius: 50%;"></div>
+                            <span style="font-size: 2rem; font-weight: 700; color: white; margin-left: 0.5rem;">Belwiek</span>
+                        </a>
+                        <h1>Hello, Friend!</h1>
+                        <p>Register with your personal details to use all of site features</p>
+                        <button class="hidden" id="register">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile,
+            GoogleAuthProvider, GithubAuthProvider, signInWithPopup, sendPasswordResetEmail,
+            setPersistence, browserSessionPersistence, browserLocalPersistence
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCGE1hTk8qWu1bojSOUmj7n6l2XpecgIA",
+            authDomain: "belwiek-de3ee.firebaseapp.com",
+            projectId: "belwiek-de3ee",
+            storageBucket: "belwiek-de3ee.firebasestorage.app",
+            messagingSenderId: "720792558267",
+            appId: "1:720792558267:web:a38a9cf1fc7fcbbe0ea79e",
+            measurementId: "G-EE2P25Y1YF"
+        };
+
+        // --- Initialize Firebase ---
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+        const githubProvider = new GithubAuthProvider();
+
+        // --- DOM Element Selection ---
+        const container = document.getElementById('container');
+        const registerBtn = document.getElementById('register');
+        const loginBtn = document.getElementById('login');
+        const mobileRegisterLink = document.getElementById('mobile-register-link');
+        const mobileLoginLink = document.getElementById('mobile-login-link');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const registerPasswordInput = document.getElementById('register-password');
+
+        // --- UI Toggling ---
+        registerBtn.addEventListener('click', () => container.classList.add('active'));
+        loginBtn.addEventListener('click', () => container.classList.remove('active'));
+        mobileRegisterLink.addEventListener('click', (e) => { e.preventDefault(); container.classList.add('active'); });
+        mobileLoginLink.addEventListener('click', (e) => { e.preventDefault(); container.classList.remove('active'); });
+
+        // --- Utility Functions ---
+        const showStatus = (elementId, type, message) => {
+            const statusEl = document.getElementById(elementId);
+            statusEl.className = `status-message ${type} visible`;
+            statusEl.textContent = message;
+        };
+        const clearStatusMessages = () => document.querySelectorAll('.status-message').forEach(el => {
+            el.className = 'status-message'; 
+            el.textContent = '';
+        });
+        const toggleButtonLoading = (buttonId, isLoading) => {
+            const button = document.getElementById(buttonId);
+            button.disabled = isLoading;
+            if (isLoading) button.classList.add('loading');
+            else button.classList.remove('loading');
+        };
+
+        const createUserDocument = async (user, name) => {
+            const userRef = doc(db, "users", user.uid);
+            const userInitial = name ? name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+            const profileImageUrl = `https://placehold.co/120x120/2563eb/FFFFFF?text=${userInitial}`;
+            
+            await setDoc(userRef, {
+                uid: user.uid, name: name || user.displayName || 'Anonymous User', email: user.email,
+                description: "Welcome to Belwiek! Edit your bio here.", profileImageUrl: user.photoURL || profileImageUrl,
+                createdAt: serverTimestamp()
+            }, { merge: true });
+        };
+
+        const checkPasswordStrength = (password) => {
+            let score = 0;
+            if (password.length >= 8) score++;
+            if (/[a-z]/.test(password)) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+            
+            const strengthBar = document.getElementById('strength-bar');
+            const strengthText = document.getElementById('strength-text');
+            
+            strengthBar.className = 'strength-bar';
+            let text = '';
+            let strengthClass = '';
+
+            switch (score) {
+                case 1: case 2: text = 'Weak'; strengthClass = 'weak'; break;
+                case 3: text = 'Medium'; strengthClass = 'medium'; break;
+                case 4: text = 'Strong'; strengthClass = 'strong'; break;
+                case 5: text = 'Very Strong'; strengthClass = 'very-strong'; break;
+            }
+            if (password.length > 0) {
+                strengthBar.classList.add(strengthClass);
+                strengthText.textContent = text;
+            } else {
+                strengthText.textContent = '';
+            }
+        };
+        registerPasswordInput.addEventListener('input', (e) => checkPasswordStrength(e.target.value));
+
+        // --- Firebase Authentication Logic ---
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearStatusMessages();
+            toggleButtonLoading('register-button', true);
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = registerPasswordInput.value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(userCredential.user, { displayName: name });
+                await createUserDocument(userCredential.user, name);
+                
+                showStatus('registerStatus', 'success', 'Account created! Redirecting...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+            } catch (error) {
+                showStatus('registerStatus', 'error', error.message);
+                toggleButtonLoading('register-button', false);
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearStatusMessages();
+            toggleButtonLoading('login-button', true);
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+
+            try {
+                const persistence = rememberMe ? browserLocalPersistence : browserSessionPersistence;
+                await setPersistence(auth, persistence);
+                
+                await signInWithEmailAndPassword(auth, email, password);
+                showStatus('loginStatus', 'success', 'Login successful! Redirecting...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            } catch (error) {
+                showStatus('loginStatus', 'error', error.message);
+                toggleButtonLoading('login-button', false);
+            }
+        });
+        
+        const handleSocialLogin = async (provider) => {
+            clearStatusMessages();
+            const buttonId = container.classList.contains('active') ? 'register-button' : 'login-button';
+            toggleButtonLoading(buttonId, true);
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await createUserDocument(result.user, result.user.displayName);
+
+                const statusId = container.classList.contains('active') ? 'registerStatus' : 'loginStatus';
+                showStatus(statusId, 'success', 'Login successful! Redirecting...');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            } catch (error) {
+                const statusId = container.classList.contains('active') ? 'registerStatus' : 'loginStatus';
+                showStatus(statusId, 'error', `Error with social login: ${error.message}`);
+                toggleButtonLoading(buttonId, false);
+            }
+        };
+        
+        [document.getElementById('googleLogin'), document.getElementById('googleRegister')].forEach(btn => {
+            btn.addEventListener('click', (e) => { e.preventDefault(); handleSocialLogin(googleProvider); });
+        });
+        
+        [document.getElementById('githubLogin'), document.getElementById('githubRegister')].forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleSocialLogin(githubProvider);
+            });
+        });
+
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            clearStatusMessages();
+            const email = document.getElementById('login-email').value.trim();
+            if (!email) {
+                showStatus('loginStatus', 'error', 'Please enter your email to reset your password.');
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showStatus('loginStatus', 'info', 'Password reset email sent! Check your inbox.');
+            } catch (error) {
+                showStatus('loginStatus', 'error', error.message);
+            }
+        });
+
+        // --- Page Load & Initial Auth ---
+        const initPage = async () => {
+            const loader = document.getElementById('loader-overlay');
+            const content = document.getElementById('main-content');
+            
+            // Hide loader and show content after a delay
+            setTimeout(() => {
+                 loader.classList.add('hidden');
+                 content.classList.add('visible');
+            }, 1000);
+        };
+
+        document.addEventListener('DOMContentLoaded', initPage);
+
+    </script>
+</body>
+</html>
