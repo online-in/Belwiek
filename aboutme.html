@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Belwiek</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-hover {
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+        #loader-overlay {
+            position: fixed; inset: 0; background-color: white; display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.7s ease-out;
+        }
+        .loader-logo {
+            width: 64px; height: 64px; background-color: #2563eb; border-radius: 50%;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            50% { transform: scale(0.9); opacity: 0.7; }
+        }
+        #main-content {
+            opacity: 0; transition: opacity 0.7s ease-in;
+        }
+        
+        /* Scroll-triggered Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(30px);
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .bw-image {
+            filter: grayscale(100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="loader-overlay">
+        <div class="loader-logo"></div>
+    </div>
+
+    <div id="main-content">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+
+            <header class="py-6">
+                <div class="flex justify-between items-center">
+                    <a href="index.html" class="flex items-center space-x-3">
+                        <div class="w-9 h-9 bg-blue-600 rounded-full"></div>
+                        <span class="text-2xl font-bold text-gray-900">Belwiek</span>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-8 text-gray-600 font-medium">
+                        <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+                        <a href="aboutme.html" class="text-blue-600 font-semibold">About</a>
+                        <a href="blog.html" class="hover:text-blue-600 transition-colors">Blog</a>
+                    </nav>
+                    <div id="auth-links" class="hidden items-center space-x-4">
+                         <a href="auth.html" class="text-gray-600 font-medium hover:text-blue-600 hidden sm:block transition-colors">Sign in</a>
+                        <a href="auth.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover font-semibold">Register</a>
+                    </div>
+                     <div id="user-links" class="hidden items-center space-x-4">
+                        <a href="profile.html" class="text-gray-600 font-medium hover:text-blue-600 hidden sm:block transition-colors">Profile</a>
+                        <a href="creat.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover font-semibold">Create Post</a>
+                        <button id="sign-out-btn" class="text-gray-600 font-medium hover:text-blue-600 transition-colors">Sign Out</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="py-16">
+                <!-- Combined About Section -->
+                <section class="max-w-6xl mx-auto animate-on-scroll">
+                    <div class="grid md:grid-cols-2 gap-16 items-center">
+                        <div class="space-y-6">
+                             <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">Our Mission: A Space for Ideas, Stories, and Connection.</h1>
+                             <p class="text-lg text-gray-600 leading-relaxed">
+                                Belwiek was born from a simple idea: to create a beautiful, intuitive, and open platform where anyone can share their thoughts, stories, and expertise. We believe that everyone has a story worth telling and an idea worth sharing. Our goal is to provide the tools to make that happen, effortlessly.
+                             </p>
+                             <p class="text-lg text-gray-600 leading-relaxed">
+                                We are dedicated to a user-centric design philosophy. From a clean, distraction-free writing editor to seamless profile management, every feature is built to be both powerful and easy to use. Belwiek is designed to get out of your way, so you can focus on what truly matters: your content.
+                             </p>
+                             <div class="border-t pt-6">
+                                <p class="text-base text-gray-500">
+                                    <span class="font-bold text-gray-700">Bharath Kumar Gorle</span><br>
+                                    Founder of Belwiek
+                                </p>
+                                 <div class="mt-4 flex space-x-4 text-gray-500">
+                                    <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
+                                    <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                                    <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-github fa-lg"></i></a>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <img src="Bharath.jpg" alt="Founder Bharath Kumar Gorle" class="w-3/4 rounded-lg object-cover shadow-2xl bw-image aspect-[4/5]">
+                        </div>
+                    </div>
+                </section>
+                
+                 <!-- Join Community Section -->
+                <section class="py-24 mt-16 text-center">
+                    <div class="max-w-3xl mx-auto animate-on-scroll">
+                         <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Join Our Community</h2>
+                        <p class="text-gray-600 mt-4 max-w-2xl mx-auto text-lg">Whether you're a seasoned writer, a professional in your field, or someone just starting to explore their passion, you have a home at Belwiek. We are building a diverse community of voices from around the world. Start sharing your journey today.</p>
+                        <a href="creat.html" class="mt-8 inline-block bg-blue-600 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 font-semibold btn-hover text-lg">
+                            Create Your First Post
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section id="contact-section" class="py-24 bg-white rounded-2xl shadow-lg">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="text-center mb-16">
+                            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 animate-on-scroll">Get In Touch</h2>
+                            <p class="text-gray-600 mt-4 text-lg animate-on-scroll" style="transition-delay: 0.1s;">
+                                Have a question or a project in mind? I'd love to hear from you.
+                            </p>
+                        </div>
+                        <div class="p-8 sm:p-10 animate-on-scroll" style="transition-delay: 0.2s;">
+                            <form id="contact-form" action="https://formspree.io/f/xanbpzkk" method="POST" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                        <input type="text" name="name" id="name" required class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                        <input type="email" name="email" id="email" required class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                                    <input type="text" name="subject" id="subject" required class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                    <textarea name="message" id="message" rows="5" required class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" class="bg-blue-600 text-white px-7 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 font-semibold btn-hover">
+                                        Send Message
+                                    </button>
+                                </div>
+                            </form>
+                             <div id="form-status" class="mt-6 text-center font-medium"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer class="bg-white pt-16 pb-8 mt-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div>
+                        <a href="index.html" class="flex items-center space-x-3">
+                            <div class="w-9 h-9 bg-blue-600 rounded-full"></div>
+                            <span class="text-2xl font-bold text-gray-900">Belwiek</span>
+                        </a>
+                        <p class="text-gray-600 mt-4">A platform for thinkers, writers, and creators.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-gray-800">Categories</h4>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="blog.html" class="text-gray-600 hover:text-blue-600">Technology</a></li>
+                            <li><a href="blog.html" class="text-gray-600 hover:text-blue-600">Business</a></li>
+                            <li><a href="blog.html" class="text-gray-600 hover:text-blue-600">Lifestyle</a></li>
+                            <li><a href="blog.html" class="text-gray-600 hover:text-blue-600">Travel</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-gray-800">Company</h4>
+                        <ul class="mt-4 space-y-2">
+                            <li><a href="aboutme.html" class="text-gray-600 hover:text-blue-600">About Us</a></li>
+                            <li><a href="blog.html" class="text-gray-600 hover:text-blue-600">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-gray-800">Subscribe to our Newsletter</h4>
+                        <p class="text-gray-600 mt-4">Get the latest posts delivered right to your inbox.</p>
+                        <div class="mt-4 flex">
+                            <input type="email" placeholder="Your email" class="w-full p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button class="bg-blue-600 text-white px-4 rounded-r-lg hover:bg-blue-700">Sub</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16 border-t border-gray-200 pt-8 text-center text-gray-500">
+                    <p>&copy; 2024 Belwiek. All Rights Reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCGE1hTk8qWu1bojSOUmj7n6l2XpecgIA",
+            authDomain: "belwiek-de3ee.firebaseapp.com",
+            projectId: "belwiek-de3ee",
+            storageBucket: "belwiek-de3ee.appspot.com",
+            messagingSenderId: "720792558267",
+            appId: "1:720792558267:web:a38a9cf1fc7fcbbe0ea79e",
+            measurementId: "G-EE2P25Y1YF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const authLinks = document.getElementById('auth-links');
+        const userLinks = document.getElementById('user-links');
+        const signOutBtn = document.getElementById('sign-out-btn');
+
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                authLinks.classList.remove('flex');
+                authLinks.classList.add('hidden');
+                userLinks.classList.remove('hidden');
+                userLinks.classList.add('flex');
+            } else {
+                authLinks.classList.remove('hidden');
+                authLinks.classList.add('flex');
+                userLinks.classList.remove('flex');
+                userLinks.classList.add('hidden');
+            }
+        });
+
+        if(signOutBtn) {
+            signOutBtn.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    window.location.href = 'index.html';
+                }).catch((error) => {
+                    console.error("Sign out error:", error);
+                });
+            });
+        }
+
+        function initPageAnimation() {
+            const loader = document.getElementById('loader-overlay');
+            const content = document.getElementById('main-content');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.addEventListener('transitionend', () => {
+                    loader.style.display = 'none';
+                    content.style.opacity = '1';
+                }, { once: true });
+            }, 500);
+        }
+        
+        function initScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = new FormData(form);
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    formStatus.textContent = "Thanks for your submission!";
+                    formStatus.style.color = 'green';
+                    form.reset();
+                } else {
+                    formStatus.textContent = "Oops! There was a problem submitting your form";
+                    formStatus.style.color = 'red';
+                }
+            } catch (error) {
+                formStatus.textContent = "Oops! There was a problem submitting your form";
+                formStatus.style.color = 'red';
+            }
+        }
+
+        if (contactForm) {
+            contactForm.addEventListener("submit", handleFormSubmit);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initPageAnimation();
+            initScrollAnimations();
+        });
+    </script>
+</body>
+</html>
+
