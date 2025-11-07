@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blog - Belwiek</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .btn-hover { transition: all 0.3s ease-in-out; }
+        .btn-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37,99,235,0.12); }
+        #loader-overlay {
+            position: fixed; inset: 0; background-color: white; display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.7s ease-out;
+        }
+        .loader-logo { width:64px; height:64px; background-color:#2563eb; border-radius:50%; animation: pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite; }
+        @keyframes pulse { 50% { transform: scale(0.92); opacity: 0.75; } }
+        #main-content { opacity: 0; transition: opacity 0.7s ease-in; }
+        .animate-slide-up { animation: slideUpFadeIn 0.8s ease-out forwards; }
+        @keyframes slideUpFadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
+        /* Blog cards + modal */
+        .blog-card { transition: transform .2s, box-shadow .2s; }
+        .blog-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(2,6,23,0.06); }
+        #blog-modal { transition: opacity .18s ease; opacity: 0; }
+        #blog-modal .modal-inner {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all .18s ease;
+        }
+        .hidden-important { display:none !important; }
+        .prose img { max-width:100%; border-radius:8px; }
+
+        /* MODIFIED: Static Gradient Search Bar */
+        .search-wrapper {
+            padding: 3px; /* This creates the border thickness */
+            /* Fully rounded pill shape */
+            border-radius: 9999px; 
+            /* The gradient from your image */
+            background: linear-gradient(90deg, 
+                #2dd4bf, /* teal */
+                #3b82f6, /* blue */
+                #a855f7, /* purple */
+                #ec4899, /* pink */
+                #f59e0b, /* orange */
+                #84cc16  /* lime */
+            );
+        }
+        
+        #search-input {
+            position: relative;
+            z-index: 2;
+            border: none !important; /* Override default border */
+            /* Rounded to fit inside the wrapper */
+            border-radius: 9999px; 
+        }
+        /* Disable default focus ring, as we have the border */
+        #search-input:focus {
+            ring: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="loader-overlay">
+        <div class="loader-logo"></div>
+    </div>
+
+    <div id="blog-modal" class="fixed inset-0 bg-black/50 hidden-important items-center justify-center z-50 p-4">
+        <div class="modal-inner bg-white rounded-lg max-w-3xl w-full mx-4 p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between">
+                <h3 id="modal-title" class="text-xl font-semibold text-gray-900"></h3>
+                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800">✕</button>
+            </div>
+
+            <img id="modal-image" src="" alt="Blog Image" class="w-full h-64 md:h-80 object-cover rounded-lg my-4" onerror="this.onerror=null;this.src='https://placehold.co/1200x600?text=No+Image'">
+
+            <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+                <span id="modal-category" class="text-sm font-medium text-blue-500 bg-blue-100 py-1 px-3 rounded-full"></span>
+                <a id="modal-author" href="#" class="hover:underline"></a>
+                <span id="modal-date"></span>
+            </div>
+
+            <div id="modal-content-html" class="prose lg:prose-lg max-w-none text-gray-700"></div>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+
+            <header class="py-6">
+                <div class="flex justify-between items-center">
+                    <a href="index.html" class="flex items-center space-x-3">
+                        <div class="w-9 h-9 bg-blue-600 rounded-full"></div>
+                        <span class="text-2xl font-bold text-gray-900">Belwiek</span>
+                    </a>
+
+                    <nav class="hidden md:flex items-center space-x-8 text-gray-600 font-medium">
+                        <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+                        <a href="aboutme.html" class="hover:text-blue-600 transition-colors">About</a>
+                        <a href="blog.html" class="text-blue-600 font-semibold">Blog</a>
+                    </nav>
+
+                    <div class="hidden md:flex items-center space-x-4">
+                        <div id="auth-links" class="hidden items-center space-x-4">
+                            <a href="auth.html" class="text-gray-600 font-medium hover:text-blue-600 hidden sm:block transition-colors">Sign in</a>
+                            <a href="auth.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover font-semibold">Register</a>
+                        </div>
+
+                        <div id="user-links" class="hidden items-center space-x-4">
+                            <a href="profile.html" class="text-gray-600 font-medium hover:text-blue-600 hidden sm:block transition-colors">Profile</a>
+                            <a href="creat.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover font-semibold">Create Post</a>
+                            <button id="sign-out-btn" class="text-gray-600 font-medium hover:text-blue-600 transition-colors">Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main id="blog-main-content" class="py-12 sm:py-16 animate-slide-up">
+                <section class="max-w-4xl mx-auto text-center mb-10">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">Discover our latest posts</h1>
+                    <p class="text-lg text-gray-600 mt-4">Explore stories, ideas, and articles from our community.</p>
+
+                    <div class="mt-6 max-w-md mx-auto">
+                        <div class="search-wrapper">
+                            <input id="search-input" type="text" placeholder="Search by title or author" class="w-full rounded-full py-3 px-4" />
+                        </div>
+                    </div>
+                </section>
+
+                <section class="max-w-6xl mx-auto">
+                    <div id="category-filters" class="flex flex-wrap gap-3 justify-center pb-4 mb-6"></div>
+
+                    <div id="blog-grid" class="grid md:grid-cols-3 gap-6"></div>
+                </section>
+            </main>
+
+            <footer class="mt-16 border-t border-gray-200 pt-8 text-center text-gray-500">
+                <p>&copy; 2024 Belwiek. All Rights Reserved.</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // keep your firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCGE1hTk8qWu1bojSOUmj7n6l2XpecgIA",
+            authDomain: "belwiek-de3ee.firebaseapp.com",
+            projectId: "belwiek-de3ee",
+            storageBucket: "belwiek-de3ee.firebasestorage.app",
+            messagingSenderId: "720792558267",
+            appId: "1:720792558267:web:a38a9cf1fc7fcbbe0ea79e",
+            measurementId: "G-EE2P25Y1YF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM refs
+        const authLinks = document.getElementById('auth-links');
+        const userLinks = document.getElementById('user-links');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const mainContent = document.getElementById('main-content');
+        const blogMainContent = document.getElementById('blog-main-content');
+        const blogGrid = document.getElementById('blog-grid');
+        const categoryFilters = document.getElementById('category-filters');
+        const searchInput = document.getElementById('search-input');
+        const blogModal = document.getElementById('blog-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        let allBlogs = [];
+
+        function hideLoader() {
+            if (loaderOverlay) {
+                loaderOverlay.style.opacity = '0';
+                loaderOverlay.addEventListener('transitionend', () => {
+                    loaderOverlay.style.display = 'none';
+                    if (mainContent) mainContent.style.opacity = '1';
+                }, { once: true });
+            } else {
+                if (mainContent) mainContent.style.opacity = '1';
+            }
+        }
+
+        // Auth links toggling only (do not gate content)
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                if (authLinks) authLinks.classList.add('hidden');
+                if (userLinks) { userLinks.classList.remove('hidden'); userLinks.classList.add('flex'); }
+            } else {
+                if (authLinks) { authLinks.classList.remove('hidden'); authLinks.classList.add('flex'); }
+                if (userLinks) userLinks.classList.add('hidden');
+            }
+        });
+
+        if (signOutBtn) {
+            signOutBtn.addEventListener('click', () => {
+                signOut(auth).then(() => window.location.href = 'index.html').catch(err => console.error('Sign out error:', err));
+            });
+        }
+
+        // Escaping helper
+        function escapeHtml(str) {
+            if (str === undefined || str === null) return '';
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        // Fetch blogs
+        async function fetchAllBlogs() {
+            try {
+                const blogsRef = collection(db, "blogs");
+                const q = query(blogsRef, orderBy("createdAt", "desc"));
+                const snap = await getDocs(q);
+                const firebaseBlogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                allBlogs = firebaseBlogs.map(b => {
+                    // normalize createdAt
+                    let date = 'Unknown';
+                    if (b.createdAt && b.createdAt.seconds) {
+                        date = new Date(b.createdAt.seconds * 1000).toLocaleDateString();
+                    } else if (b.createdAt instanceof Date) {
+                        date = b.createdAt.toLocaleDateString();
+                    }
+                    return {
+                        id: b.id,
+                        title: b.title || 'Untitled',
+                        excerpt: b.excerpt || (b.content ? String(b.content).slice(0, 160) + '...' : ''),
+                        imageUrl: b.imageUrl || 'https://placehold.co/600x400/ddd/777?text=No+Image',
+                        category: b.category || 'Uncategorized',
+                        authorName: b.authorName || 'Unknown',
+                        authorId: b.authorId || null,
+                        createdAtFormatted: date,
+                        content: b.content || ''
+                    };
+                });
+                return allBlogs;
+            } catch (err) {
+                console.error('Error fetching blogs:', err);
+                allBlogs = [];
+                return [];
+            }
+        }
+
+        // Render grid
+        function displayBlogs(list) {
+            const arr = list || [];
+            blogGrid.innerHTML = '';
+            if (!arr.length) {
+                blogGrid.innerHTML = '<div class="col-span-3 text-center text-gray-500 py-12">No posts found.</div>';
+                return;
+            }
+
+            arr.forEach(blog => {
+                const article = document.createElement('article');
+                article.className = 'blog-card bg-white rounded-lg overflow-hidden shadow-sm cursor-pointer';
+                article.dataset.id = blog.id;
+                const authorLink = blog.authorId ? `author.html?uid=${blog.authorId}` : '#';
+                article.innerHTML = `
+                    <img src="${escapeHtml(blog.imageUrl)}" alt="${escapeHtml(blog.title)}" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=No+Image'" />
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-blue-600">${escapeHtml(blog.category)}</span>
+                            <span class="text-xs text-gray-400">${escapeHtml(blog.createdAtFormatted)}</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${escapeHtml(blog.title)}</h3>
+                        <p class="text-sm text-gray-600">${escapeHtml(blog.excerpt)}</p>
+                        <div class="mt-3 text-xs text-gray-500">
+                            By <a href="${authorLink}" class="font-medium text-gray-700 hover:text-blue-600">${escapeHtml(blog.authorName)}</a>
+                        </div>
+                    </div>
+                `;
+                article.addEventListener('click', (e) => {
+                    // Prevent card click if author link was clicked
+                    if (e.target.closest('a')) return;
+                    openBlogModal(blog.id);
+                });
+                blogGrid.appendChild(article);
+            });
+        }
+
+        // Category filters
+        function populateCategoryFilters(blogs) {
+            const cats = Array.from(new Set((blogs || []).map(b => b.category || 'Uncategorized')));
+            const categories = ['All', ...cats];
+            categoryFilters.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = cat;
+                btn.dataset.category = cat;
+                btn.className = 'px-4 py-2 rounded-full text-sm font-medium border btn-hover ' + (cat === 'All' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300');
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#category-filters button').forEach(b => {
+                        b.classList.toggle('bg-blue-600', b === btn);
+                        b.classList.toggle('text-white', b === btn);
+                        b.classList.toggle('border-blue-600', b === btn);
+                        b.classList.toggle('bg-white', b !== btn);
+                        b.classList.toggle('text-gray-700', b !== btn);
+                        b.classList.toggle('border-gray-300', b !== btn);
+                    });
+                    applyFilters();
+                });
+                categoryFilters.appendChild(btn);
+            });
+        }
+
+        // Apply search + category
+        function applyFilters() {
+            const search = (searchInput && searchInput.value || '').trim().toLowerCase();
+            const activeBtn = document.querySelector('#category-filters button.bg-blue-600');
+            const category = activeBtn ? activeBtn.dataset.category : 'All';
+            let filtered = allBlogs.slice();
+            if (category && category !== 'All') {
+                filtered = filtered.filter(b => (b.category || '').toLowerCase() === category.toLowerCase());
+            }
+            if (search) {
+                filtered = filtered.filter(b => (b.title || '').toLowerCase().includes(search) || (b.authorName || '').toLowerCase().includes(search));
+            }
+            displayBlogs(filtered);
+        }
+
+        // Modal open/close
+        function openBlogModal(blogId) {
+            const blog = allBlogs.find(b => b.id === blogId);
+            if (!blog) return;
+            document.getElementById('modal-title').textContent = blog.title;
+            document.getElementById('modal-image').src = blog.imageUrl;
+            document.getElementById('modal-category').textContent = blog.category;
+            const modalAuthor = document.getElementById('modal-author');
+            modalAuthor.textContent = blog.authorName;
+            modalAuthor.href = blog.authorId ? `author.html?uid=${blog.authorId}` : '#';
+            
+            document.getElementById('modal-date').textContent = blog.createdAtFormatted;
+            document.getElementById('modal-content-html').innerHTML = blog.content || '<p class="text-gray-600">No content available.</p>';
+
+            blogModal.classList.remove('hidden-important');
+            
+            blogModal.style.opacity = '1'; 
+            setTimeout(() => {
+                const inner = blogModal.querySelector('.modal-inner');
+                if (inner) {
+                    inner.style.transform = 'scale(1)'; 
+                    inner.style.opacity = '1'; 
+                }
+            }, 10);
+        }
+
+        function closeBlogModal() {
+            blogModal.style.opacity = '0'; 
+            const inner = blogModal.querySelector('.modal-inner');
+            if (inner) {
+                inner.style.transform = 'scale(0.95)'; 
+                inner.style.opacity = '0'; 
+            }
+            setTimeout(() => {
+                blogModal.classList.add('hidden-important');
+                if (inner) inner.scrollTop = 0;
+            }, 180); // Wait for transition to finish
+        }
+
+        // init
+        async function initBlogPage() {
+            // load page UI (search, etc.) already present in markup
+            const blogs = await fetchAllBlogs();
+            populateCategoryFilters(blogs || []);
+            displayBlogs(blogs || []);
+            hideLoader();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // ensure search listener
+            if (searchInput) {
+                let debounce;
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounce);
+                    debounce = setTimeout(applyFilters, 200);
+                });
+            }
+
+            // modal close
+            modalCloseBtn && modalCloseBtn.addEventListener('click', closeBlogModal);
+            blogModal && blogModal.addEventListener('click', (e) => {
+                if (e.target === blogModal) closeBlogModal();
+            });
+
+            initBlogPage();
+        });
+
+    </script>
+</body>
+</html>
