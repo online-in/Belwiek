@@ -1,95 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Blog - Belwiek</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belwiek - Blog</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .btn-hover { transition: all 0.3s ease-in-out; }
-        .btn-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37,99,235,0.12); }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-hover {
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+        }
+        .blog-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .blog-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        #blog-modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #blog-modal.hidden {
+            pointer-events: none;
+        }
+        #blog-modal .modal-content {
+             transition: transform 0.3s ease;
+        }
         #loader-overlay {
             position: fixed; inset: 0; background-color: white; display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.7s ease-out;
         }
-        .loader-logo { width:64px; height:64px; background-color:#2563eb; border-radius:50%; animation: pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite; }
-        @keyframes pulse { 50% { transform: scale(0.92); opacity: 0.75; } }
-        #main-content { opacity: 0; transition: opacity 0.7s ease-in; }
-        .animate-slide-up { animation: slideUpFadeIn 0.8s ease-out forwards; }
-        @keyframes slideUpFadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
-
-        /* Blog cards + modal */
-        .blog-card { transition: transform .2s, box-shadow .2s; }
-        .blog-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(2,6,23,0.06); }
-        #blog-modal { transition: opacity .18s ease; opacity: 0; }
-        #blog-modal .modal-inner {
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all .18s ease;
+        .loader-logo {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        .hidden-important { display:none !important; }
-        .prose img { max-width:100%; border-radius:8px; }
-
-        /* MODIFIED: Static Gradient Search Bar */
-        .search-wrapper {
-            padding: 3px; /* This creates the border thickness */
-            /* Fully rounded pill shape */
-            border-radius: 9999px; 
-            /* The gradient from your image */
-            background: linear-gradient(90deg, 
-                #2dd4bf, /* teal */
-                #3b82f6, /* blue */
-                #a855f7, /* purple */
-                #ec4899, /* pink */
-                #f59e0b, /* orange */
-                #84cc16  /* lime */
-            );
+        @keyframes pulse {
+            50% { transform: scale(0.9); opacity: 0.7; }
         }
-        
-        #search-input {
+        #main-content {
+            opacity: 0; transition: opacity 0.7s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* Styles for the gradient border search bar */
+        .search-container .gradient-border-wrap {
             position: relative;
-            z-index: 2;
-            border: none !important; /* Override default border */
-            /* Rounded to fit inside the wrapper */
-            border-radius: 9999px; 
+            padding: 2px;
+            border-radius: 0.75rem; /* rounded-xl */
+            background: linear-gradient(90deg, #d1d5db, #d1d5db); /* Default gray border */
+            transition: background 0.4s ease;
         }
-        /* Disable default focus ring, as we have the border */
-        #search-input:focus {
-            ring: none !important;
-            box-shadow: none !important;
-            outline: none !important;
+        .search-container .gradient-border-wrap:focus-within {
+            background: linear-gradient(90deg, #3b82f6, #818cf8, #ec4899, #f59e0b);
+        }
+        .search-container input {
+            border: none;
+            outline: none;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 0.6rem; /* Slightly smaller than parent for border effect */
+            padding-left: 2.75rem; /* pl-11 */
+            padding-right: 1rem;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
         }
     </style>
 </head>
-
 <body class="bg-gray-50 text-gray-800">
 
     <div id="loader-overlay">
-        <div class="loader-logo"></div>
+        <div class="loader-logo w-16 h-16 bg-blue-600 rounded-full"></div>
     </div>
 
-    <div id="blog-modal" class="fixed inset-0 bg-black/50 hidden-important items-center justify-center z-50 p-4">
-        <div class="modal-inner bg-white rounded-lg max-w-3xl w-full mx-4 p-6 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between">
-                <h3 id="modal-title" class="text-xl font-semibold text-gray-900"></h3>
-                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800">✕</button>
-            </div>
-
-            <img id="modal-image" src="" alt="Blog Image" class="w-full h-64 md:h-80 object-cover rounded-lg my-4" onerror="this.onerror=null;this.src='https://placehold.co/1200x600?text=No+Image'">
-
-            <div class="flex items-center gap-3 text-sm text-gray-500 mb-4">
+    <div id="blog-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0" onclick="closeBlogModal()">
+        <div class="modal-content bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto transform scale-95" onclick="event.stopPropagation()">
+            <div class="p-4 sm:p-6 md:p-8">
+                <div class="flex justify-between items-start">
+                    <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-gray-900"></h2>
+                    <button onclick="closeBlogModal()" class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+                </div>
+                <img id="modal-image" src="" alt="Blog Image" class="w-full h-64 md:h-80 object-cover rounded-lg my-4">
                 <span id="modal-category" class="text-sm font-medium text-blue-500 bg-blue-100 py-1 px-3 rounded-full"></span>
-                <a id="modal-author" href="#" class="hover:underline"></a>
-                <span id="modal-date"></span>
+                <div id="modal-content-html" class="text-gray-700 mt-4 prose lg:prose-lg max-w-none"></div>
             </div>
-
-            <div id="modal-content-html" class="prose lg:prose-lg max-w-none text-gray-700"></div>
         </div>
     </div>
 
@@ -98,55 +104,29 @@
 
             <header class="py-6">
                 <div class="flex justify-between items-center">
-                    <a href="index.html" class="flex items-center space-x-3">
-                        <div class="w-9 h-9 bg-blue-600 rounded-full"></div>
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full"></div>
                         <span class="text-2xl font-bold text-gray-900">Belwiek</span>
                     </a>
-
-                    <nav class="hidden md:flex items-center space-x-8 text-gray-600 font-medium">
-                        <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
-                        <a href="aboutme.html" class="hover:text-blue-600 transition-colors">About</a>
+                    <nav class="hidden md:flex items-center space-x-8">
+                        <a href="index.html" class="text-gray-600 hover:text-blue-600">Home</a>
+                        <a href="aboutme.html" class="text-gray-600 hover:text-blue-600">About</a>
                         <a href="blog.html" class="text-blue-600 font-semibold">Blog</a>
                     </nav>
-
-                    <div class="hidden md:flex items-center space-x-4">
-                        <div id="auth-links" class="hidden items-center space-x-4">
-                            <a href="auth.html" class="text-gray-600 font-medium hover:text-blue-600 hidden sm:block transition-colors">Sign in</a>
-                            <a href="auth.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover font-semibold">Register</a>
-                        </div>
-
-                        <div id="user-links" class="hidden items-center space-x-4">
-                            <a href="profile.html" class="text-gray-600 font-medium hover:text-blue-600 hidden sm:block transition-colors">Profile</a>
-                            <a href="creat.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover font-semibold">Create Post</a>
-                            <button id="sign-out-btn" class="text-gray-600 font-medium hover:text-blue-600 transition-colors">Sign Out</button>
-                        </div>
+                    <div id="auth-links" class="flex items-center space-x-4">
+                         <a href="auth.html" class="text-gray-600 hover:text-blue-600 hidden sm:block">Sign in</a>
+                        <a href="auth.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover">Register</a>
+                    </div>
+                     <div id="user-links" class="hidden items-center space-x-4">
+                        <a href="profile.html" class="text-gray-600 hover:text-blue-600 hidden sm:block">Profile</a>
+                        <a href="creat.html" class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 btn-hover">Create Post</a>
+                        <button id="sign-out-btn" class="text-gray-600 hover:text-blue-600">Sign Out</button>
                     </div>
                 </div>
             </header>
 
-            <main id="blog-main-content" class="py-12 sm:py-16 animate-slide-up">
-                <section class="max-w-4xl mx-auto text-center mb-10">
-                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">Discover our latest posts</h1>
-                    <p class="text-lg text-gray-600 mt-4">Explore stories, ideas, and articles from our community.</p>
-
-                    <div class="mt-6 max-w-md mx-auto">
-                        <div class="search-wrapper">
-                            <input id="search-input" type="text" placeholder="Search by title or author" class="w-full rounded-full py-3 px-4" />
-                        </div>
-                    </div>
-                </section>
-
-                <section class="max-w-6xl mx-auto">
-                    <div id="category-filters" class="flex flex-wrap gap-3 justify-center pb-4 mb-6"></div>
-
-                    <div id="blog-grid" class="grid md:grid-cols-3 gap-6"></div>
-                </section>
-            </main>
-
-            <footer class="mt-16 border-t border-gray-200 pt-8 text-center text-gray-500">
-                <p>&copy; 2024 Belwiek. All Rights Reserved.</p>
-            </footer>
-
+            <main id="blog-main-content" class="py-8 md:py-16">
+                </main>
         </div>
     </div>
 
@@ -155,7 +135,6 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // keep your firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyCCGE1hTk8qWu1bojSOUmj7n6l2XpecgIA",
             authDomain: "belwiek-de3ee.firebaseapp.com",
@@ -170,241 +149,299 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // DOM refs
+        // --- DOM Elements ---
         const authLinks = document.getElementById('auth-links');
         const userLinks = document.getElementById('user-links');
         const signOutBtn = document.getElementById('sign-out-btn');
-        const loaderOverlay = document.getElementById('loader-overlay');
         const mainContent = document.getElementById('main-content');
         const blogMainContent = document.getElementById('blog-main-content');
-        const blogGrid = document.getElementById('blog-grid');
-        const categoryFilters = document.getElementById('category-filters');
-        const searchInput = document.getElementById('search-input');
-        const blogModal = document.getElementById('blog-modal');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const loaderOverlay = document.getElementById('loader-overlay');
+        
+        let allBlogs = []; // To store all fetched blogs
 
-        let allBlogs = [];
-
-        function hideLoader() {
-            if (loaderOverlay) {
+        // --- Page Load Animation ---
+        function initPageAnimation() {
+            setTimeout(() => {
                 loaderOverlay.style.opacity = '0';
                 loaderOverlay.addEventListener('transitionend', () => {
                     loaderOverlay.style.display = 'none';
-                    if (mainContent) mainContent.style.opacity = '1';
+                    mainContent.style.opacity = '1';
                 }, { once: true });
-            } else {
-                if (mainContent) mainContent.style.opacity = '1';
-            }
+            }, 1000);
         }
-
-        // Auth links toggling only (do not gate content)
+        
+        // --- Auth State Observer ---
         onAuthStateChanged(auth, user => {
             if (user) {
-                if (authLinks) authLinks.classList.add('hidden');
-                if (userLinks) { userLinks.classList.remove('hidden'); userLinks.classList.add('flex'); }
+                // User is signed in
+                authLinks.classList.add('hidden');
+                userLinks.classList.remove('hidden');
+                userLinks.classList.add('flex');
+                
+                loadBlogPageContent();
+                fetchAndDisplayBlogs();
+                initPageAnimation();
+
             } else {
-                if (authLinks) { authLinks.classList.remove('hidden'); authLinks.classList.add('flex'); }
-                if (userLinks) userLinks.classList.add('hidden');
-            }
-        });
-
-        if (signOutBtn) {
-            signOutBtn.addEventListener('click', () => {
-                signOut(auth).then(() => window.location.href = 'index.html').catch(err => console.error('Sign out error:', err));
-            });
-        }
-
-        // Escaping helper
-        function escapeHtml(str) {
-            if (str === undefined || str === null) return '';
-            return String(str)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        }
-
-        // Fetch blogs
-        async function fetchAllBlogs() {
-            try {
-                const blogsRef = collection(db, "blogs");
-                const q = query(blogsRef, orderBy("createdAt", "desc"));
-                const snap = await getDocs(q);
-                const firebaseBlogs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                allBlogs = firebaseBlogs.map(b => {
-                    // normalize createdAt
-                    let date = 'Unknown';
-                    if (b.createdAt && b.createdAt.seconds) {
-                        date = new Date(b.createdAt.seconds * 1000).toLocaleDateString();
-                    } else if (b.createdAt instanceof Date) {
-                        date = b.createdAt.toLocaleDateString();
-                    }
-                    return {
-                        id: b.id,
-                        title: b.title || 'Untitled',
-                        excerpt: b.excerpt || (b.content ? String(b.content).slice(0, 160) + '...' : ''),
-                        imageUrl: b.imageUrl || 'https://placehold.co/600x400/ddd/777?text=No+Image',
-                        category: b.category || 'Uncategorized',
-                        authorName: b.authorName || 'Unknown',
-                        authorId: b.authorId || null,
-                        createdAtFormatted: date,
-                        content: b.content || ''
-                    };
-                });
-                return allBlogs;
-            } catch (err) {
-                console.error('Error fetching blogs:', err);
-                allBlogs = [];
-                return [];
-            }
-        }
-
-        // Render grid
-        function displayBlogs(list) {
-            const arr = list || [];
-            blogGrid.innerHTML = '';
-            if (!arr.length) {
-                blogGrid.innerHTML = '<div class="col-span-3 text-center text-gray-500 py-12">No posts found.</div>';
-                return;
-            }
-
-            arr.forEach(blog => {
-                const article = document.createElement('article');
-                article.className = 'blog-card bg-white rounded-lg overflow-hidden shadow-sm cursor-pointer';
-                article.dataset.id = blog.id;
-                const authorLink = blog.authorId ? `author.html?uid=${blog.authorId}` : '#';
-                article.innerHTML = `
-                    <img src="${escapeHtml(blog.imageUrl)}" alt="${escapeHtml(blog.title)}" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=No+Image'" />
-                    <div class="p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-blue-600">${escapeHtml(blog.category)}</span>
-                            <span class="text-xs text-gray-400">${escapeHtml(blog.createdAtFormatted)}</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${escapeHtml(blog.title)}</h3>
-                        <p class="text-sm text-gray-600">${escapeHtml(blog.excerpt)}</p>
-                        <div class="mt-3 text-xs text-gray-500">
-                            By <a href="${authorLink}" class="font-medium text-gray-700 hover:text-blue-600">${escapeHtml(blog.authorName)}</a>
+                // User is signed out
+                // ----- THIS IS THE FIX -----
+                // Instead of showing "Access Denied", redirect to home.
+                // This listener will catch the sign-out from the button
+                // and handle the redirect correctly.
+                window.location.href = 'index.html';
+                
+                /* --- OLD CODE THAT CAUSED THE BUG ---
+                authLinks.classList.remove('hidden');
+                userLinks.classList.add('hidden');
+                
+                loaderOverlay.style.display = 'none';
+                mainContent.style.opacity = '1';
+                blogMainContent.innerHTML = `
+                    <div class="text-center max-w-3xl mx-auto py-16">
+                        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2">Access Denied</h1>
+                        <p class="text-gray-600 mt-4 text-lg">
+                            You need to be logged in to view our blog posts. Please sign in or create an account to continue.
+                        </p>
+                        <div class="mt-8">
+                            <a href="auth.html" class="bg-blue-600 text-white px-7 py-3 rounded-lg shadow-md hover:bg-blue-700 btn-hover">Sign In or Register</a>
                         </div>
                     </div>
                 `;
-                article.addEventListener('click', (e) => {
-                    // Prevent card click if author link was clicked
-                    if (e.target.closest('a')) return;
-                    openBlogModal(blog.id);
-                });
-                blogGrid.appendChild(article);
+                */
+            }
+        });
+
+        // --- Sign Out ---
+        if (signOutBtn) {
+            // ----- THIS IS THE SECOND PART OF THE FIX -----
+            // Remove the .then() redirect from the click listener.
+            // Let onAuthStateChanged handle all auth-based redirects.
+            signOutBtn.addEventListener('click', () => {
+                signOut(auth).catch(error => console.error("Sign out error:", error));
+            });
+        }
+        
+        function loadBlogPageContent() {
+             blogMainContent.innerHTML = `
+                <div class="text-center max-w-3xl mx-auto animate-fade-in">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2">Discover our latest news</h1>
+                    <p class="text-gray-600 mt-4 text-lg">
+                        Explore stories, ideas, and articles from our community of creators.
+                    </p>
+                    <div class="mt-8 max-w-lg mx-auto search-container">
+                        <div class="relative gradient-border-wrap shadow-sm">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input id="search-input" type="text" placeholder="Search for articles..." class="w-full bg-white focus:outline-none text-gray-700">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 animate-fade-in" style="animation-delay: 0.2s;">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">Filter by Category</h2>
+                    <div id="category-filters" class="flex flex-wrap justify-center gap-2">
+                        </div>
+                </div>
+
+                <div class="mt-12 lg:mt-16 animate-fade-in" style="animation-delay: 0.4s;">
+                    <div id="blog-grid" class="min-h-[400px]">
+                        <p id="loading-message" class="col-span-full text-center">Loading posts...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Re-add event listeners for search after content is loaded
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keyup', (e) => {
+                // Trigger search on enter or when input is cleared
+                if (e.key === 'Enter' || searchInput.value === '') {
+                    handleSearch();
+                }
             });
         }
 
-        // Category filters
+        // --- Fetch and Display Blogs ---
+        async function fetchAndDisplayBlogs() {
+            const blogsRef = collection(db, "blogs");
+            const q = query(blogsRef, orderBy("createdAt", "desc"));
+            const loadingMessage = document.getElementById('loading-message');
+
+            try {
+                const querySnapshot = await getDocs(q);
+                if(loadingMessage) loadingMessage.style.display = 'none';
+                
+                const blogGrid = document.getElementById('blog-grid');
+                if (querySnapshot.empty) {
+                    blogGrid.innerHTML = '<p class="col-span-full text-center">No blog posts found. Be the first to create one!</p>';
+                    return;
+                }
+                
+                allBlogs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                displayBlogs(allBlogs);
+                populateCategoryFilters(allBlogs);
+
+            } catch (error) {
+                console.error("Error fetching blogs: ", error);
+                if(loadingMessage) {
+                    loadingMessage.textContent = 'Failed to load blog posts.';
+                    loadingMessage.style.color = 'red';
+                }
+            }
+        }
+
+        function displayBlogs(blogs) {
+            const blogGrid = document.getElementById('blog-grid');
+            blogGrid.innerHTML = ''; 
+            
+            if (blogs.length === 0) {
+                 blogGrid.innerHTML = '<p class="col-span-full text-center py-16">No posts found matching your criteria.</p>';
+                 return;
+            }
+
+            // The main container is no longer a grid itself, but holds grid sections.
+            blogGrid.className = '';
+
+            // --- Featured Section ---
+            const featuredSection = document.createElement('div');
+            featuredSection.className = 'grid lg:grid-cols-3 gap-8 mb-16';
+            
+            // The main featured post (left side)
+            const featuredBlog = blogs[0];
+            const postDate = featuredBlog.createdAt ? new Date(featuredBlog.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+            const featuredPostHTML = `
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-lg overflow-hidden blog-card cursor-pointer" data-id="${featuredBlog.id}">
+                    <img src="${featuredBlog.imageUrl}" alt="${featuredBlog.title}" class="w-full h-96 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x500/ccc/FFFFFF?text=Image';">
+                    <div class="p-6">
+                        <span class="text-sm font-medium text-blue-500 bg-blue-100 py-1 px-3 rounded-full">${featuredBlog.category}</span>
+                        <h3 class="text-3xl font-bold mt-4">${featuredBlog.title}</h3>
+                        <p class="text-sm text-gray-500 mt-4">By <a href="author.html?uid=${featuredBlog.authorId}" class="font-semibold text-gray-800 hover:text-blue-600">${featuredBlog.authorName || 'Unknown'}</a> - ${postDate}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Side posts (right side)
+            const sidePostsContainer = document.createElement('div');
+            sidePostsContainer.className = 'space-y-6';
+            const sidePosts = blogs.slice(1, 4); // Take next 3 posts
+
+            sidePosts.forEach(blog => {
+                const smallPostDate = blog.createdAt ? new Date(blog.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                const smallPostHTML = `
+                    <div class="flex items-center space-x-4 cursor-pointer blog-card p-2 rounded-lg" data-id="${blog.id}">
+                        <img src="${blog.imageUrl}" class="w-24 h-24 rounded-lg object-cover flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/100x100/ccc/FFFFFF?text=Img';">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 transition-colors duration-300">${blog.title}</h4>
+                            <span class="text-sm text-gray-500">By <a href="author.html?uid=${blog.authorId}" class="font-semibold text-gray-800 hover:text-blue-600">${blog.authorName || 'Unknown'}</a> - ${smallPostDate}</span>
+                        </div>
+                    </div>
+                `;
+                sidePostsContainer.innerHTML += smallPostHTML;
+            });
+
+            featuredSection.innerHTML = featuredPostHTML;
+            if (sidePosts.length > 0) {
+                featuredSection.appendChild(sidePostsContainer);
+            }
+            blogGrid.appendChild(featuredSection);
+
+
+            // --- Regular Grid for Remaining Posts ---
+            const remainingBlogs = blogs.slice(4);
+            if (remainingBlogs.length > 0) {
+                const morePostsHeader = document.createElement('h2');
+                morePostsHeader.className = 'text-3xl font-bold mb-8 border-t pt-12';
+                morePostsHeader.textContent = 'More Posts';
+                blogGrid.appendChild(morePostsHeader);
+
+                const regularGrid = document.createElement('div');
+                regularGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
+
+                remainingBlogs.forEach(blog => {
+                    const postDate = blog.createdAt ? new Date(blog.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+                    const cardHTML = `
+                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden blog-card cursor-pointer" data-id="${blog.id}">
+                            <img src="${blog.imageUrl}" alt="${blog.title}" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/ccc/FFFFFF?text=Image';">
+                            <div class="p-4 flex flex-col flex-grow">
+                                <span class="text-xs font-medium text-blue-500 bg-blue-100 py-1 px-2 rounded-full self-start">${blog.category}</span>
+                                <h3 class="text-lg font-bold mt-2 flex-grow">${blog.title}</h3>
+                                <p class="text-xs text-gray-500 mt-2">By <a href="author.html?uid=${blog.authorId}" class="font-semibold text-gray-800 hover:text-blue-600">${blog.authorName || 'Unknown'}</a> - ${postDate}</p>
+                            </div>
+                        </div>
+                    `;
+                    regularGrid.innerHTML += cardHTML;
+                });
+                blogGrid.appendChild(regularGrid);
+            }
+            
+            // Re-attach event listeners for the modal
+            document.querySelectorAll('.blog-card').forEach(card => {
+                card.addEventListener('click', () => openBlogModal(card.dataset.id));
+            });
+        }
+
         function populateCategoryFilters(blogs) {
-            const cats = Array.from(new Set((blogs || []).map(b => b.category || 'Uncategorized')));
-            const categories = ['All', ...cats];
-            categoryFilters.innerHTML = '';
-            categories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.textContent = cat;
-                btn.dataset.category = cat;
-                btn.className = 'px-4 py-2 rounded-full text-sm font-medium border btn-hover ' + (cat === 'All' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300');
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('#category-filters button').forEach(b => {
-                        b.classList.toggle('bg-blue-600', b === btn);
-                        b.classList.toggle('text-white', b === btn);
-                        b.classList.toggle('border-blue-600', b === btn);
-                        b.classList.toggle('bg-white', b !== btn);
-                        b.classList.toggle('text-gray-700', b !== btn);
-                        b.classList.toggle('border-gray-300', b !== btn);
-                    });
-                    applyFilters();
-                });
-                categoryFilters.appendChild(btn);
+            const categoryFiltersContainer = document.getElementById('category-filters');
+            if (!categoryFiltersContainer) return;
+            const categories = ['All', ...new Set(blogs.map(blog => blog.category))];
+            categoryFiltersContainer.innerHTML = '';
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.dataset.category = category;
+                button.className = `px-4 py-2 rounded-full text-sm font-semibold btn-hover ${category === 'All' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+                button.onclick = () => filterByCategory(category);
+                categoryFiltersContainer.appendChild(button);
             });
         }
 
-        // Apply search + category
-        function applyFilters() {
-            const search = (searchInput && searchInput.value || '').trim().toLowerCase();
-            const activeBtn = document.querySelector('#category-filters button.bg-blue-600');
-            const category = activeBtn ? activeBtn.dataset.category : 'All';
-            let filtered = allBlogs.slice();
-            if (category && category !== 'All') {
-                filtered = filtered.filter(b => (b.category || '').toLowerCase() === category.toLowerCase());
+        function filterByCategory(category) {
+            document.querySelectorAll('#category-filters button').forEach(btn => {
+                btn.classList.toggle('bg-blue-600', btn.dataset.category === category);
+                btn.classList.toggle('text-white', btn.dataset.category === category);
+                btn.classList.toggle('bg-gray-200', btn.dataset.category !== category);
+                btn.classList.toggle('text-gray-700', btn.dataset.category !== category);
+            });
+
+            const searchInput = document.getElementById('search-input');
+            const searchTerm = searchInput.value.toLowerCase();
+            let filteredBlogs = category === 'All' ? allBlogs : allBlogs.filter(blog => blog.category === category);
+            if (searchTerm) {
+                filteredBlogs = filteredBlogs.filter(blog => 
+                    blog.title.toLowerCase().includes(searchTerm) ||
+                    (blog.authorName && blog.authorName.toLowerCase().includes(searchTerm))
+                );
             }
-            if (search) {
-                filtered = filtered.filter(b => (b.title || '').toLowerCase().includes(search) || (b.authorName || '').toLowerCase().includes(search));
-            }
-            displayBlogs(filtered);
+            displayBlogs(filteredBlogs);
+        }
+        
+        function handleSearch() {
+            const activeCategoryBtn = document.querySelector('#category-filters button.bg-blue-600');
+            const activeCategory = activeCategoryBtn ? activeCategoryBtn.dataset.category : 'All';
+            filterByCategory(activeCategory);
         }
 
-        // Modal open/close
+        const blogModal = document.getElementById('blog-modal');
         function openBlogModal(blogId) {
             const blog = allBlogs.find(b => b.id === blogId);
             if (!blog) return;
+
             document.getElementById('modal-title').textContent = blog.title;
             document.getElementById('modal-image').src = blog.imageUrl;
             document.getElementById('modal-category').textContent = blog.category;
-            const modalAuthor = document.getElementById('modal-author');
-            modalAuthor.textContent = blog.authorName;
-            modalAuthor.href = blog.authorId ? `author.html?uid=${blog.authorId}` : '#';
-            
-            document.getElementById('modal-date').textContent = blog.createdAtFormatted;
-            document.getElementById('modal-content-html').innerHTML = blog.content || '<p class="text-gray-600">No content available.</p>';
+            document.getElementById('modal-content-html').innerHTML = blog.content;
 
-            blogModal.classList.remove('hidden-important');
-            
-            blogModal.style.opacity = '1'; 
+            blogModal.classList.remove('hidden');
             setTimeout(() => {
-                const inner = blogModal.querySelector('.modal-inner');
-                if (inner) {
-                    inner.style.transform = 'scale(1)'; 
-                    inner.style.opacity = '1'; 
-                }
+                 blogModal.classList.remove('opacity-0');
+                 blogModal.querySelector('.modal-content').classList.remove('scale-95');
             }, 10);
         }
 
-        function closeBlogModal() {
-            blogModal.style.opacity = '0'; 
-            const inner = blogModal.querySelector('.modal-inner');
-            if (inner) {
-                inner.style.transform = 'scale(0.95)'; 
-                inner.style.opacity = '0'; 
-            }
-            setTimeout(() => {
-                blogModal.classList.add('hidden-important');
-                if (inner) inner.scrollTop = 0;
-            }, 180); // Wait for transition to finish
+        window.closeBlogModal = () => {
+             blogModal.classList.add('opacity-0');
+             blogModal.querySelector('.modal-content').classList.add('scale-95');
+             setTimeout(() => blogModal.classList.add('hidden'), 300);
         }
-
-        // init
-        async function initBlogPage() {
-            // load page UI (search, etc.) already present in markup
-            const blogs = await fetchAllBlogs();
-            populateCategoryFilters(blogs || []);
-            displayBlogs(blogs || []);
-            hideLoader();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // ensure search listener
-            if (searchInput) {
-                let debounce;
-                searchInput.addEventListener('input', () => {
-                    clearTimeout(debounce);
-                    debounce = setTimeout(applyFilters, 200);
-                });
-            }
-
-            // modal close
-            modalCloseBtn && modalCloseBtn.addEventListener('click', closeBlogModal);
-            blogModal && blogModal.addEventListener('click', (e) => {
-                if (e.target === blogModal) closeBlogModal();
-            });
-
-            initBlogPage();
-        });
-
     </script>
+
 </body>
 </html>
