@@ -126,7 +126,8 @@
             </header>
 
             <main id="blog-main-content" class="py-8 md:py-16">
-                </main>
+                <!-- Content injected via JS -->
+            </main>
         </div>
     </div>
 
@@ -161,61 +162,74 @@
 
         // --- Page Load Animation ---
         function initPageAnimation() {
-            setTimeout(() => {
-                loaderOverlay.style.opacity = '0';
-                loaderOverlay.addEventListener('transitionend', () => {
-                    loaderOverlay.style.display = 'none';
-                    mainContent.style.opacity = '1';
-                }, { once: true });
-            }, 1000);
+            // Only run this if loader is still visible
+            if (loaderOverlay.style.display !== 'none') {
+                setTimeout(() => {
+                    loaderOverlay.style.opacity = '0';
+                    loaderOverlay.addEventListener('transitionend', () => {
+                        loaderOverlay.style.display = 'none';
+                        mainContent.style.opacity = '1';
+                    }, { once: true });
+                }, 1000);
+            } else {
+                mainContent.style.opacity = '1';
+            }
         }
         
         // --- Auth State Observer ---
         onAuthStateChanged(auth, user => {
             if (user) {
-                // User is signed in
+                // --- User IS Logged In ---
                 authLinks.classList.add('hidden');
                 userLinks.classList.remove('hidden');
                 userLinks.classList.add('flex');
                 
+                // Load actual blog content
                 loadBlogPageContent();
                 fetchAndDisplayBlogs();
+                
+                // Trigger animation
                 initPageAnimation();
 
             } else {
-                // User is signed out
-                // ----- THIS IS THE FIX -----
-                // Instead of showing "Access Denied", redirect to home.
-                // This listener will catch the sign-out from the button
-                // and handle the redirect correctly.
-                window.location.href = 'index.html';
-                
-                /* --- OLD CODE THAT CAUSED THE BUG ---
+                // --- User is NOT Logged In (Restricted Access) ---
                 authLinks.classList.remove('hidden');
+                authLinks.classList.add('flex');
                 userLinks.classList.add('hidden');
+                userLinks.classList.remove('flex');
                 
+                // Hide loader immediately to show message
                 loaderOverlay.style.display = 'none';
                 mainContent.style.opacity = '1';
+
+                // Inject Restricted Message
                 blogMainContent.innerHTML = `
-                    <div class="text-center max-w-3xl mx-auto py-16">
-                        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2">Access Denied</h1>
-                        <p class="text-gray-600 mt-4 text-lg">
-                            You need to be logged in to view our blog posts. Please sign in or create an account to continue.
+                    <div class="text-center max-w-3xl mx-auto py-16 animate-fade-in px-4">
+                        <div class="mb-6 flex justify-center">
+                             <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-lock text-3xl text-gray-400"></i>
+                             </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-bold text-gray-900 mt-2">Access Restricted</h1>
+                        <p class="text-gray-600 mt-6 text-lg leading-relaxed max-w-xl mx-auto">
+                            To maintain the quality of our community, blog content is available to members only.
+                            <br>Please sign in or create an account to start reading.
                         </p>
-                        <div class="mt-8">
-                            <a href="auth.html" class="bg-blue-600 text-white px-7 py-3 rounded-lg shadow-md hover:bg-blue-700 btn-hover">Sign In or Register</a>
+                        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                            <a href="auth.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg shadow-lg hover:bg-blue-700 btn-hover font-semibold transition-all">
+                                Sign In
+                            </a>
+                            <a href="auth.html" class="bg-white text-gray-700 border border-gray-300 px-8 py-3 rounded-lg shadow-sm hover:bg-gray-50 btn-hover font-semibold transition-all">
+                                Create Account
+                            </a>
                         </div>
                     </div>
                 `;
-                */
             }
         });
 
         // --- Sign Out ---
         if (signOutBtn) {
-            // ----- THIS IS THE SECOND PART OF THE FIX -----
-            // Remove the .then() redirect from the click listener.
-            // Let onAuthStateChanged handle all auth-based redirects.
             signOutBtn.addEventListener('click', () => {
                 signOut(auth).catch(error => console.error("Sign out error:", error));
             });
@@ -249,14 +263,14 @@
                 </div>
             `;
             
-            // Re-add event listeners for search after content is loaded
             const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('keyup', (e) => {
-                // Trigger search on enter or when input is cleared
-                if (e.key === 'Enter' || searchInput.value === '') {
-                    handleSearch();
-                }
-            });
+            if(searchInput) {
+                searchInput.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter' || searchInput.value === '') {
+                        handleSearch();
+                    }
+                });
+            }
         }
 
         // --- Fetch and Display Blogs ---
@@ -297,14 +311,12 @@
                  return;
             }
 
-            // The main container is no longer a grid itself, but holds grid sections.
             blogGrid.className = '';
 
             // --- Featured Section ---
             const featuredSection = document.createElement('div');
             featuredSection.className = 'grid lg:grid-cols-3 gap-8 mb-16';
             
-            // The main featured post (left side)
             const featuredBlog = blogs[0];
             const postDate = featuredBlog.createdAt ? new Date(featuredBlog.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
             const featuredPostHTML = `
@@ -318,10 +330,9 @@
                 </div>
             `;
             
-            // Side posts (right side)
             const sidePostsContainer = document.createElement('div');
             sidePostsContainer.className = 'space-y-6';
-            const sidePosts = blogs.slice(1, 4); // Take next 3 posts
+            const sidePosts = blogs.slice(1, 4); 
 
             sidePosts.forEach(blog => {
                 const smallPostDate = blog.createdAt ? new Date(blog.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
@@ -343,8 +354,7 @@
             }
             blogGrid.appendChild(featuredSection);
 
-
-            // --- Regular Grid for Remaining Posts ---
+            // --- Regular Grid ---
             const remainingBlogs = blogs.slice(4);
             if (remainingBlogs.length > 0) {
                 const morePostsHeader = document.createElement('h2');
@@ -372,7 +382,6 @@
                 blogGrid.appendChild(regularGrid);
             }
             
-            // Re-attach event listeners for the modal
             document.querySelectorAll('.blog-card').forEach(card => {
                 card.addEventListener('click', () => openBlogModal(card.dataset.id));
             });
@@ -402,7 +411,7 @@
             });
 
             const searchInput = document.getElementById('search-input');
-            const searchTerm = searchInput.value.toLowerCase();
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
             let filteredBlogs = category === 'All' ? allBlogs : allBlogs.filter(blog => blog.category === category);
             if (searchTerm) {
                 filteredBlogs = filteredBlogs.filter(blog => 
